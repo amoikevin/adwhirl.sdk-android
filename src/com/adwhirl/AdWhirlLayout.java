@@ -42,7 +42,6 @@ import com.adwhirl.obj.Custom;
 import com.adwhirl.obj.Extra;
 import com.adwhirl.obj.Ration;
 import com.adwhirl.util.AdWhirlUtil;
-import com.qwapi.adclient.android.view.QWAdView;
 
 public class AdWhirlLayout extends RelativeLayout {
 	public final WeakReference<Activity> activityReference;
@@ -53,6 +52,7 @@ public class AdWhirlLayout extends RelativeLayout {
 	// We also need a scheduler for background threads
 	public final ScheduledExecutorService scheduler;
 	
+	private String keyAdWhirl;
 	public Extra extra;
 	
 	// The current custom ad
@@ -64,39 +64,70 @@ public class AdWhirlLayout extends RelativeLayout {
 	public Ration activeRation;
 	public Ration nextRation;
 	
-	// The Quattro callbacks don't contain a reference to the view, so we keep it here
-	public QWAdView quattroView;
-	
 	public AdWhirlInterface adWhirlInterface;  
 	
 	public AdWhirlManager adWhirlManager;
 	
 	private boolean hasWindow;
-	private boolean isRotating;
+	private boolean isScheduled;
+	
+	private int maxWidth;
+	public void setMaxWidth(int width) { maxWidth = width; }
+	
+	private int maxHeight;
+	public void setMaxHeight(int height) { maxHeight = height; }
 	
 	public AdWhirlLayout(final Activity context, final String keyAdWhirl) {
 		super(context);
 		this.activityReference = new WeakReference<Activity>(context);
 		this.superViewReference = new WeakReference<RelativeLayout>(this);
 		
+		this.keyAdWhirl = keyAdWhirl;
+		
 		this.hasWindow = true;
-		this.isRotating = true;
 		
 		handler = new Handler();
+
 		scheduler = Executors.newScheduledThreadPool(1);
+		this.isScheduled = true;
 		scheduler.schedule(new InitRunnable(this, keyAdWhirl), 0, TimeUnit.SECONDS);
-		
+
 		setHorizontalScrollBarEnabled(false);
 		setVerticalScrollBarEnabled(false);
+		
+		this.maxWidth = 0;
+		this.maxHeight = 0;
+	}
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+		
+		if (maxWidth > 0 && widthSize > maxWidth){
+			widthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST);
+		}
+		
+		if (maxHeight > 0 && heightSize > maxHeight){
+			heightMeasureSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST);
+		}
+		
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 	
 	@Override
 	protected void onWindowVisibilityChanged(int visibility) {
 		 if(visibility == VISIBLE) {
 			 this.hasWindow = true;
-			 if(!this.isRotating) {
-				 this.isRotating = true;
-				 rotateThreadedNow();
+			 if(!this.isScheduled) {
+				 this.isScheduled = true;
+				 
+				 if(this.extra != null) {
+					 rotateThreadedNow();
+				 }
+				 else {
+					scheduler.schedule(new InitRunnable(this, keyAdWhirl), 0, TimeUnit.SECONDS);
+				 }
 			 }
 		}
 		 else {
@@ -106,7 +137,7 @@ public class AdWhirlLayout extends RelativeLayout {
 	
 	private void rotateAd() {
 		if(!this.hasWindow) {
-			this.isRotating = false;
+			this.isScheduled = false;
 			return;
 		}
 		
@@ -172,14 +203,18 @@ public class AdWhirlLayout extends RelativeLayout {
 		handler.post(new HandleAdRunnable(this));
 	}
 
-	private void countImpression() {		        
-		String url = String.format(AdWhirlUtil.urlImpression, adWhirlManager.keyAdWhirl, activeRation.nid, activeRation.type, adWhirlManager.deviceIDHash, adWhirlManager.localeString, AdWhirlUtil.VERSION);
-		scheduler.schedule(new PingUrlRunnable(url), 0, TimeUnit.SECONDS);
+	private void countImpression() {	
+		if(activeRation != null) {
+			String url = String.format(AdWhirlUtil.urlImpression, adWhirlManager.keyAdWhirl, activeRation.nid, activeRation.type, adWhirlManager.deviceIDHash, adWhirlManager.localeString, AdWhirlUtil.VERSION);
+			scheduler.schedule(new PingUrlRunnable(url), 0, TimeUnit.SECONDS);
+		}
 	}
 	
 	private void countClick() {
-		String url = String.format(AdWhirlUtil.urlClick, adWhirlManager.keyAdWhirl, activeRation.nid, activeRation.type, adWhirlManager.deviceIDHash, adWhirlManager.localeString, AdWhirlUtil.VERSION);
-		scheduler.schedule(new PingUrlRunnable(url), 0, TimeUnit.SECONDS);
+		if(activeRation != null) {
+			String url = String.format(AdWhirlUtil.urlClick, adWhirlManager.keyAdWhirl, activeRation.nid, activeRation.type, adWhirlManager.deviceIDHash, adWhirlManager.localeString, AdWhirlUtil.VERSION);
+			scheduler.schedule(new PingUrlRunnable(url), 0, TimeUnit.SECONDS);
+		}
 	}
 	
 	//We intercept clicks to provide raw metrics
@@ -246,15 +281,24 @@ public class AdWhirlLayout extends RelativeLayout {
 					return;
 				}
 				
-				adWhirlLayout.adWhirlManager = new AdWhirlManager(new WeakReference<Context>(activity.getApplicationContext()), keyAdWhirl);
-				adWhirlLayout.extra = adWhirlLayout.adWhirlManager.getExtra();
-			
-				if(adWhirlLayout.extra == null) {
-					Log.e(AdWhirlUtil.ADWHIRL, "Unable to get configuration info or bad info, exiting AdWhirl");
+				if(adWhirlLayout.adWhirlManager == null) {
+					adWhirlLayout.adWhirlManager = new AdWhirlManager(new WeakReference<Context>(activity.getApplicationContext()), keyAdWhirl);
+				}
+				
+				if(!adWhirlLayout.hasWindow) {
+					adWhirlLayout.isScheduled = false;
 					return;
 				}
 				
-				adWhirlLayout.rotateAd();
+				adWhirlLayout.adWhirlManager.fetchConfig();
+				adWhirlLayout.extra = adWhirlLayout.adWhirlManager.getExtra();
+				
+				if(adWhirlLayout.extra == null) {
+					adWhirlLayout.scheduler.schedule(this, 30, TimeUnit.SECONDS);
+				}
+				else {
+					adWhirlLayout.rotateAd();
+				}
 			}
 		}
 	}

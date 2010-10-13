@@ -20,8 +20,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.adwhirl.AdWhirlLayout.AdWhirlInterface;
 import com.adwhirl.adapters.AdWhirlAdapter;
@@ -62,10 +65,22 @@ public class Invoker extends Activity implements AdWhirlInterface {
         AdWhirlAdapter.setGoogleAdSenseAppName("AdWhirl Test App");
         AdWhirlAdapter.setGoogleAdSenseCompanyName("AdWhirl");
         
+        // Optional, will fetch new config if necessary after five minutes.
+        AdWhirlManager.setConfigExpireTimeout(1000 * 60 * 5);
+        
         AdWhirlLayout adWhirlLayout = new AdWhirlLayout(this, "643eb700781e4f47b017ea27d1aba3be");
         adWhirlLayout.setAdWhirlInterface(this);
-        RelativeLayout.LayoutParams adWhirlLayoutParams = new RelativeLayout.LayoutParams(width, height);
+        adWhirlLayout.setMaxWidth(width);
+        adWhirlLayout.setMaxHeight(height);
+        RelativeLayout.LayoutParams adWhirlLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        adWhirlLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
         layout.addView(adWhirlLayout, adWhirlLayoutParams);
+        
+        TextView textView = new TextView(this);
+        textView.setText("Below AdWhirlLayout");
+        layout.addView(textView, adWhirlLayoutParams);
+        
         layout.invalidate();
     }
 

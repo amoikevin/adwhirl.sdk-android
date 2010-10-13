@@ -45,11 +45,15 @@ public class EventAdapter extends AdWhirlAdapter {
 			String method = null;
 			if(key == null) {
 				Log.w(AdWhirlUtil.ADWHIRL, "Event key is null");
+				adWhirlLayout.rollover();
+				return;
 			}
 			
 			int methodIndex = key.indexOf("|;|");
 			if(methodIndex < 0) {
 				Log.w(AdWhirlUtil.ADWHIRL, "Event key separator not found");
+				adWhirlLayout.rollover();
+				return;
 			}
 			
 			method = key.substring(methodIndex + 3);
@@ -61,19 +65,23 @@ public class EventAdapter extends AdWhirlAdapter {
 				listenerMethod.invoke(adWhirlLayout.adWhirlInterface, (Object[])null);
 			} catch (Exception e) { 
 				Log.e(AdWhirlUtil.ADWHIRL, "Caught exception in handle()", e);
+				adWhirlLayout.rollover();
+				return;
 			}
 		}
 		else {
 			Log.w(AdWhirlUtil.ADWHIRL, "Event notification would be sent, but no interface is listening");
+			adWhirlLayout.rollover();
+			return;
 		}
 
 		//  In your custom event code, you'll want to call some of the below methods.
 		//
 		//  On success:
-		//  this.adWhirlLayout.adWhirlManager.resetRollover();
-		//  this.adWhirlLayout.rotateThreadedDelayed();
+		//  adWhirlLayout.adWhirlManager.resetRollover();
+		//  adWhirlLayout.rotateThreadedDelayed();
 		//
 		//  On failure:
-		//  this.adWhirlLayout.rolloverThreaded();
+		//  adWhirlLayout.rollover();
 	}
 }

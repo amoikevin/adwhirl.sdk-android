@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.*;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -62,6 +63,9 @@ public class AdWhirlManager {
 	private double totalWeight = 0;
 	private WeakReference<Context> contextReference;
 	
+	// Default config expire timeout is 30 minutes.
+	private static long configExpireTimeout = 1800000;
+	
 	Iterator<Ration> rollovers;
 	
 	public String localeString;
@@ -69,12 +73,14 @@ public class AdWhirlManager {
 	
 	public Location location;
 	
+	private final static String PREFS_STRING_TIMESTAMP = "timestamp";
+	private final static String PREFS_STRING_CONFIG = "config";
+	
 	public AdWhirlManager(WeakReference<Context> contextReference, String keyAdWhirl) {
 		Log.i(AdWhirlUtil.ADWHIRL, "Creating adWhirlManager...");
 		this.contextReference = contextReference;
 		this.keyAdWhirl = keyAdWhirl;
-		init();
-
+	
 		localeString = Locale.getDefault().toString();
 		Log.d(AdWhirlUtil.ADWHIRL, "Locale is: " + localeString);
 		
@@ -91,20 +97,9 @@ public class AdWhirlManager {
 		
 		Log.i(AdWhirlUtil.ADWHIRL, "Finished creating adWhirlManager");
 	}
-
-	// This fetches the configuration
-	private void init() {
-		while(extra == null) {
-			fetchConfig();
-			if(extra == null) {
-				try {
-					Log.d(AdWhirlUtil.ADWHIRL, "Sleeping for 30 seconds");
-					Thread.sleep(30 * 1000);
-				} catch (InterruptedException e) {
-					Log.e(AdWhirlUtil.ADWHIRL, "Thread unable to sleep", e);
-				}
-			}
-		}
+	
+	public static void setConfigExpireTimeout(long configExpireTimeout) {
+		AdWhirlManager.configExpireTimeout = configExpireTimeout;
 	}
 	
 	public Extra getExtra() {
@@ -200,29 +195,55 @@ public class AdWhirlManager {
 	}
 	
     public void fetchConfig() {
-        HttpClient httpClient = new DefaultHttpClient();
+    	Context context = contextReference.get();
+    	
+		// If the context is null here something went wrong with initialization.
+    	if(context == null) {
+    		return;
+    	}
+    	
+	    SharedPreferences adWhirlPrefs = context.getSharedPreferences(keyAdWhirl, Context.MODE_PRIVATE);
+	    String jsonString = adWhirlPrefs.getString(PREFS_STRING_CONFIG, null);
+	    long timestamp = adWhirlPrefs.getLong(PREFS_STRING_TIMESTAMP, -1);
+	    
+    	Log.d(AdWhirlUtil.ADWHIRL, "Prefs{" + keyAdWhirl + "}: {\"" + PREFS_STRING_CONFIG + "\": \"" + jsonString + "\", \"" + PREFS_STRING_TIMESTAMP + "\": " + timestamp + "}");
+	    
+	    if(jsonString == null || configExpireTimeout == -1 || System.currentTimeMillis() >= timestamp + configExpireTimeout) {
+	    	Log.i(AdWhirlUtil.ADWHIRL, "Stored config info not present or expired, fetching fresh data");
+	    	
+	        HttpClient httpClient = new DefaultHttpClient();
+	        
+	        String url = String.format(AdWhirlUtil.urlConfig, this.keyAdWhirl, AdWhirlUtil.VERSION);
+	        HttpGet httpGet = new HttpGet(url); 
+	 
+	        HttpResponse httpResponse;
+	        try {
+	            httpResponse = httpClient.execute(httpGet);
+	     
+	            Log.d(AdWhirlUtil.ADWHIRL,httpResponse.getStatusLine().toString());
+	 
+	            HttpEntity entity = httpResponse.getEntity();
+	 
+	            if (entity != null) {
+	                InputStream inputStream = entity.getContent();
+	                jsonString = convertStreamToString(inputStream); 
+	                
+	                SharedPreferences.Editor editor = adWhirlPrefs.edit();
+	                editor.putString(PREFS_STRING_CONFIG, jsonString);
+	                editor.putLong(PREFS_STRING_TIMESTAMP, System.currentTimeMillis());
+	                editor.commit();
+	            }
+	        } catch (ClientProtocolException e) {
+	        	Log.e(AdWhirlUtil.ADWHIRL, "Caught ClientProtocolException in fetchConfig()", e);
+	        } catch (IOException e) {
+	        	Log.e(AdWhirlUtil.ADWHIRL, "Caught IOException in fetchConfig()", e);
+	        }
+	    }
+	    else {
+	    	Log.i(AdWhirlUtil.ADWHIRL, "Using stored config data");
+	    }
         
-        String url = String.format(AdWhirlUtil.urlConfig, this.keyAdWhirl, AdWhirlUtil.VERSION);
-        HttpGet httpGet = new HttpGet(url); 
- 
-        HttpResponse httpResponse;
-        try {
-            httpResponse = httpClient.execute(httpGet);
-     
-            Log.d(AdWhirlUtil.ADWHIRL,httpResponse.getStatusLine().toString());
- 
-            HttpEntity entity = httpResponse.getEntity();
- 
-            if (entity != null) {
-                InputStream inputStream = entity.getContent();
-                String jsonString = convertStreamToString(inputStream);                
-                parseConfigurationString(jsonString);
-            }
-        } catch (ClientProtocolException e) {
-        	Log.e(AdWhirlUtil.ADWHIRL, "Caught ClientProtocolException in fetchConfig()", e);
-        } catch (IOException e) {
-        	Log.e(AdWhirlUtil.ADWHIRL, "Caught IOException in fetchConfig()", e);
-        }
+        parseConfigurationString(jsonString);
     }
     
 	private String convertStreamToString(InputStream is) {
@@ -320,34 +341,17 @@ public class AdWhirlManager {
 			    ration.weight = jsonRation.getInt("weight");
 			    ration.priority = jsonRation.getInt("priority");
 			    
+			    // Quattro has a special key format due to legacy compatibility.
 			    switch(ration.type) {
-			    case AdWhirlUtil.NETWORK_TYPE_ADMOB:
-				    ration.key = jsonRation.getString("key");
-			    	break;
-			    	
 			    case AdWhirlUtil.NETWORK_TYPE_QUATTRO:
 			    	JSONObject keyObj = jsonRation.getJSONObject("key");
 			    	ration.key = keyObj.getString("siteID");
 			    	ration.key2 = keyObj.getString("publisherID");
 			    	break;
 			    	
-			    case AdWhirlUtil.NETWORK_TYPE_MILLENNIAL:
-				    ration.key = jsonRation.getString("key");
-			    	break;
-			    	
-			    case AdWhirlUtil.NETWORK_TYPE_CUSTOM:
-			    	break;
-			    	
-			    case AdWhirlUtil.NETWORK_TYPE_GENERIC:
-			    	break;
-			    	
-			    case AdWhirlUtil.NETWORK_TYPE_EVENT:
-				    ration.key = jsonRation.getString("key");
-			    	break;
-			    	
 			    default:
-			    	Log.w(AdWhirlUtil.ADWHIRL, "Don't know how to fetch key for unexpected ration type: " + ration.type);
-			    	continue;
+				    ration.key = jsonRation.getString("key");
+				    break;
 			    }
 				
 			    this.totalWeight += ration.weight;

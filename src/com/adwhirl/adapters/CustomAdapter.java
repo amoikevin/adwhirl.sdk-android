@@ -75,8 +75,8 @@ public class CustomAdapter extends AdWhirlAdapter {
 			}
 			ImageView bannerImageView = new ImageView(activity);
 			bannerImageView.setImageDrawable(adWhirlLayout.custom.image);
-			bannerImageView.setScaleType(ScaleType.FIT_CENTER);
-			RelativeLayout.LayoutParams bannerViewParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			RelativeLayout.LayoutParams bannerViewParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			bannerViewParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 			bannerView.addView(bannerImageView, bannerViewParams);
 			adWhirlLayout.pushSubView(bannerView);
 			break;
@@ -88,6 +88,7 @@ public class CustomAdapter extends AdWhirlAdapter {
 				adWhirlLayout.rotateThreadedNow();
 				return;
 			}
+			// This may be incorrect and need to be adjusted for density.
 			iconView.setLayoutParams(new LayoutParams(320, 50));  // Size of the banner
 			ImageView blendView = new ImageView(activity);
 			int backgroundColor = Color.rgb(adWhirlLayout.extra.bgRed, adWhirlLayout.extra.bgGreen, adWhirlLayout.extra.bgBlue);
