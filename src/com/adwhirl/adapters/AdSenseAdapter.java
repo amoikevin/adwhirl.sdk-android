@@ -1,5 +1,6 @@
 package com.adwhirl.adapters;
 
+import java.lang.StringBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class AdSenseAdapter extends AdWhirlAdapter implements AdViewListener {
     if (!TextUtils.isEmpty(googleAdSenseChannel)) {
       spec.setChannel(googleAdSenseChannel);
     }
-    spec.setKeywords(AdWhirlTargeting.getKeywords());
+    
     spec.setAdFormat(AdFormat.FORMAT_320x50);
     spec.setAdTestEnabled(false);
 
@@ -75,10 +76,12 @@ public class AdSenseAdapter extends AdWhirlAdapter implements AdViewListener {
     final int age = AdWhirlTargeting.getAge();
     spec.setAge(age);
 
-    final String keywords = AdWhirlTargeting.getKeywords();
+    final String keywords = AdWhirlTargeting.getKeywordSet() != null ?
+        TextUtils.join(",", AdWhirlTargeting.getKeywordSet()) :
+        AdWhirlTargeting.getKeywords();
     if (!TextUtils.isEmpty(keywords)) {
-      spec.setKeywords(keywords);
-    }
+	    spec.setKeywords(keywords);
+	  }
 
     // According to AdSense guidelines, we cannot display an expandable ad in a ListView or ScrollView
     boolean canExpand = true;

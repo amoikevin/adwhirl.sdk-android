@@ -20,6 +20,8 @@ package com.adwhirl;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AdWhirlTargeting {
 	private static boolean testMode;
@@ -27,6 +29,7 @@ public class AdWhirlTargeting {
 	private static GregorianCalendar birthDate;
 	private static String postalCode;
 	private static String keywords;
+  private static Set<String> keywordSet;
 
 	static {
 		resetData();
@@ -38,6 +41,7 @@ public class AdWhirlTargeting {
 		AdWhirlTargeting.birthDate = null;
 		AdWhirlTargeting.postalCode = null;
 		AdWhirlTargeting.keywords = null;
+    AdWhirlTargeting.keywordSet = null;
 	}
 	
 	public static boolean getTestMode() {
@@ -92,11 +96,26 @@ public class AdWhirlTargeting {
 		AdWhirlTargeting.postalCode = postalCode;
 	}
 	
-	public static String getKeywords() {
-		return keywords;
+	public static Set<String> getKeywordSet() {
+		return keywordSet;
 	}
+
+  public static String getKeywords() {
+    return keywords;
+  }
 	
-	public static void setKeywords(String keywords) {
-		AdWhirlTargeting.keywords = keywords;
+	public static void setKeywordSet(Set<String> keywords) {
+		AdWhirlTargeting.keywordSet = keywords;
 	}
+
+  public static void setKeywords(String keywords) {
+    AdWhirlTargeting.keywords = keywords;
+  }
+
+  public static void addKeyword(String keyword) {
+    if (keywordSet == null) {
+      AdWhirlTargeting.keywordSet = new HashSet<String>();
+    }
+    keywordSet.add(keyword);
+  }
 }

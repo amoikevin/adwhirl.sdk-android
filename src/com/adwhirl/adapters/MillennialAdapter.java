@@ -63,10 +63,11 @@ public class MillennialAdapter extends AdWhirlAdapter implements MMAdListener {
 	      if (!TextUtils.isEmpty(postalCode)) {
 	    	  map.put("zip", postalCode);
 	      }
-
-	      final String keywords = AdWhirlTargeting.getKeywords();
-	      if (!TextUtils.isEmpty(keywords)) {
-	    	  map.put("keywords", keywords);
+        final String keywords = AdWhirlTargeting.getKeywordSet() != null ?
+            TextUtils.join(",", AdWhirlTargeting.getKeywordSet()) :
+            AdWhirlTargeting.getKeywords();
+        if (!TextUtils.isEmpty(keywords)) {
+	        map.put("keywords", keywords);
 	      }
 	      
 	      // MM requests this pair to be specified
