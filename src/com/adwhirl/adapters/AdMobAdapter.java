@@ -86,8 +86,9 @@ public class AdMobAdapter extends AdWhirlAdapter implements AdListener {
 	if (!TextUtils.isEmpty(postalCode)) {
 		AdManager.setPostalCode(postalCode);
 	}
-
-	final String keywords = AdWhirlTargeting.getKeywords();
+  final String keywords = AdWhirlTargeting.getKeywordSet() != null ?
+      TextUtils.join(" ", AdWhirlTargeting.getKeywordSet()) :
+      AdWhirlTargeting.getKeywords();
 	if (!TextUtils.isEmpty(keywords)) {
 		adMob.setKeywords(keywords);
 	}

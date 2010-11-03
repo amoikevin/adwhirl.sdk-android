@@ -30,6 +30,9 @@ import com.adwhirl.AdWhirlLayout.AdWhirlInterface;
 import com.adwhirl.adapters.AdWhirlAdapter;
 import com.adwhirl.util.AdWhirlUtil;
 
+import java.util.HashSet;
+import java.util.Arrays;
+
 public class Invoker extends Activity implements AdWhirlInterface {
 	// For more easily detecting memory leaks.
 	// byte[] garbage = new byte[1000 * 1024];
@@ -58,7 +61,8 @@ public class Invoker extends Activity implements AdWhirlInterface {
         
         AdWhirlTargeting.setAge(23);
         AdWhirlTargeting.setGender(AdWhirlTargeting.Gender.MALE);
-        AdWhirlTargeting.setKeywords("online games gaming");
+        String keywords[] = {"online", "games", "gaming"};
+        AdWhirlTargeting.setKeywordSet(new HashSet<String>(Arrays.asList(keywords)));
         AdWhirlTargeting.setPostalCode("94123");
         AdWhirlTargeting.setTestMode(false);
         
