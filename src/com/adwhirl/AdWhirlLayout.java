@@ -30,8 +30,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -44,13 +46,13 @@ import com.adwhirl.obj.Ration;
 import com.adwhirl.util.AdWhirlUtil;
 
 public class AdWhirlLayout extends RelativeLayout {
-	public final WeakReference<Activity> activityReference;
+	public WeakReference<Activity> activityReference;
 	
 	// Only the UI thread can update the UI, so we need this for UI callbacks
-	public final Handler handler;
+	public final Handler handler = new Handler();
 	
 	// We also need a scheduler for background threads
-	public final ScheduledExecutorService scheduler;
+	public final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	
 	private String keyAdWhirl;
 	public Extra extra;
@@ -79,24 +81,35 @@ public class AdWhirlLayout extends RelativeLayout {
 	
 	public AdWhirlLayout(final Activity context, final String keyAdWhirl) {
 		super(context);
-		this.activityReference = new WeakReference<Activity>(context);
-		this.superViewReference = new WeakReference<RelativeLayout>(this);
-		
-		this.keyAdWhirl = keyAdWhirl;
-		
-		this.hasWindow = true;
-		
-		handler = new Handler();
+		init(context, keyAdWhirl);
+	}
 
-		scheduler = Executors.newScheduledThreadPool(1);
-		this.isScheduled = true;
-		scheduler.schedule(new InitRunnable(this, keyAdWhirl), 0, TimeUnit.SECONDS);
+	public AdWhirlLayout(Context context, AttributeSet attrs) {
+	    super(context, attrs);
+	    // Retrieves AdWhirl key.
+	    TypedArray array =
+	        getContext().obtainStyledAttributes(attrs, R.styleable.com_adwhirl_AdWhirlLayout);
+	    String key = null;
+	    if (array != null) {
+	        key = array.getString(R.styleable.com_adwhirl_AdWhirlLayout_keyAdWhirl);
+	    }
+	    
+	    init((Activity) context, key);
+	}
+	
+	protected void init(final Activity context, final String keyAdWhirl) {
+        this.activityReference = new WeakReference<Activity>(context);
+        this.superViewReference = new WeakReference<RelativeLayout>(this);
+        this.keyAdWhirl = keyAdWhirl;
+        this.hasWindow = true;
+        this.isScheduled = true;
+        scheduler.schedule(new InitRunnable(this, keyAdWhirl), 0, TimeUnit.SECONDS);
 
-		setHorizontalScrollBarEnabled(false);
-		setVerticalScrollBarEnabled(false);
-		
-		this.maxWidth = 0;
-		this.maxHeight = 0;
+        setHorizontalScrollBarEnabled(false);
+        setVerticalScrollBarEnabled(false);
+        
+        this.maxWidth = 0;
+        this.maxHeight = 0;
 	}
 	
 	@Override

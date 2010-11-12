@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, AdWhirl!</string>
     <string name="app_name">AdWhirl</string>
+    <string name="below_layout_xml">Below AdWhirlLayout from XML</string>
 </resources>
