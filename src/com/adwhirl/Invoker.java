@@ -34,8 +34,8 @@ import java.util.HashSet;
 import java.util.Arrays;
 
 public class Invoker extends Activity implements AdWhirlInterface {
-	// For more easily detecting memory leaks.
-	// byte[] garbage = new byte[1000 * 1024];
+    // For more easily detecting memory leaks.
+    // byte[] garbage = new byte[1000 * 1024];
 	
     /** Called when the activity is first created. */ 
     @Override
@@ -49,7 +49,9 @@ public class Invoker extends Activity implements AdWhirlInterface {
         	Log.e("AdWhirl", "Layout is null!");
         	return;
         }
-
+        
+        // These are density-independent pixel units, as defined in
+        // http://developer.android.com/guide/practices/screens_support.html
         int width = 320;
         int height = 52;
         
@@ -62,7 +64,7 @@ public class Invoker extends Activity implements AdWhirlInterface {
         AdWhirlTargeting.setAge(23);
         AdWhirlTargeting.setGender(AdWhirlTargeting.Gender.MALE);
         String keywords[] = {"online", "games", "gaming"};
-        AdWhirlTargeting.setKeywordSet(new HashSet<String>(Arrays.asList(keywords)));
+        AdWhirlTargeting.setKeywordSet(new HashSet<String> (Arrays.asList(keywords)));
         AdWhirlTargeting.setPostalCode("94123");
         AdWhirlTargeting.setTestMode(false);
         
@@ -72,23 +74,32 @@ public class Invoker extends Activity implements AdWhirlInterface {
         // Optional, will fetch new config if necessary after five minutes.
         AdWhirlManager.setConfigExpireTimeout(1000 * 60 * 5);
         
-        AdWhirlLayout adWhirlLayout = new AdWhirlLayout(this, "643eb700781e4f47b017ea27d1aba3be");
+        // References AdWhirlLayout defined in the layout XML. 
+        AdWhirlLayout adWhirlLayout = (AdWhirlLayout) findViewById(R.id.adwhirl_layout);
         adWhirlLayout.setAdWhirlInterface(this);
         adWhirlLayout.setMaxWidth(width);
         adWhirlLayout.setMaxHeight(height);
+
+        // Instantiates AdWhirlLayout from code.
+        // Note: Showing two ads on the same screen is for illustrative purposes only.
+        // You should check with ad networks on their specific policies.
+        AdWhirlLayout adWhirlLayout2 = new AdWhirlLayout(this, "643eb700781e4f47b017ea27d1aba3be");
+        adWhirlLayout2.setAdWhirlInterface(this);
+        adWhirlLayout2.setMaxWidth(width);
+        adWhirlLayout2.setMaxHeight(height);
         RelativeLayout.LayoutParams adWhirlLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         adWhirlLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
-        layout.addView(adWhirlLayout, adWhirlLayoutParams);
-        
+        layout.addView(adWhirlLayout2, adWhirlLayoutParams);
+
         TextView textView = new TextView(this);
-        textView.setText("Below AdWhirlLayout");
-        layout.addView(textView, adWhirlLayoutParams);
-        
+        textView.setText("Below AdWhirlLayout from code");
+        layout.addView(textView, adWhirlLayoutParams); 
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
         layout.invalidate();
     }
 
-	public void adWhirlGeneric() {
-		Log.e(AdWhirlUtil.ADWHIRL, "In adWhirlGeneric()");
-	}
+    public void adWhirlGeneric() {
+        Log.e(AdWhirlUtil.ADWHIRL, "In adWhirlGeneric()");
+    }
 }
