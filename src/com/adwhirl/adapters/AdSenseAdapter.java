@@ -1,18 +1,5 @@
 package com.adwhirl.adapters;
 
-import java.lang.StringBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewParent;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ListView;
-import android.widget.ScrollView;
-
 import com.adwhirl.AdWhirlLayout;
 import com.adwhirl.AdWhirlTargeting;
 import com.adwhirl.AdWhirlLayout.ViewAdRunnable;
@@ -24,6 +11,18 @@ import com.google.ads.AdViewListener;
 import com.google.ads.GoogleAdView;
 import com.google.ads.AdSenseSpec.AdFormat;
 import com.google.ads.AdSenseSpec.ExpandDirection;
+
+import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewParent;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ListView;
+import android.widget.ScrollView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdSenseAdapter extends AdWhirlAdapter implements AdViewListener {
   private GoogleAdView adView;
@@ -62,7 +61,9 @@ public class AdSenseAdapter extends AdWhirlAdapter implements AdViewListener {
     }
     
     spec.setAdFormat(AdFormat.FORMAT_320x50);
-    spec.setAdTestEnabled(false);
+    
+    boolean testMode = AdWhirlTargeting.getTestMode();
+    spec.setAdTestEnabled(testMode);
 
     adView = new GoogleAdView(adWhirlLayout.getContext());
     adView.setAdViewListener(this);
