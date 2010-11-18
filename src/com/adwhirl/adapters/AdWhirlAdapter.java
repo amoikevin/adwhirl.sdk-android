@@ -75,6 +75,8 @@ public abstract class AdWhirlAdapter {
 					else {
 						return unknownAdNetwork(adWhirlLayout, ration);
 					}
+        case AdWhirlUtil.NETWORK_TYPE_MDOTM:
+          return getNetworkAdapter("com.adwhirl.adapters.MdotMAdapter", adWhirlLayout, ration);
 				case AdWhirlUtil.NETWORK_TYPE_CUSTOM:
 					return new CustomAdapter(adWhirlLayout, ration);
 				
@@ -92,7 +94,7 @@ public abstract class AdWhirlAdapter {
 			return unknownAdNetwork(adWhirlLayout, ration);
 		}
 		catch(VerifyError e) {
-		  Log.e("AdWhirl", "YYY - Caught VerifyError", e);
+		  Log.e("AdWhirl", "Caught VerifyError", e);
           return unknownAdNetwork(adWhirlLayout, ration);
 		}
 	}
