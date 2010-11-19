@@ -83,7 +83,7 @@ public class Invoker extends Activity implements AdWhirlInterface {
         // Instantiates AdWhirlLayout from code.
         // Note: Showing two ads on the same screen is for illustrative purposes only.
         // You should check with ad networks on their specific policies.
-        AdWhirlLayout adWhirlLayout2 = new AdWhirlLayout(this, "643eb700781e4f47b017ea27d1aba3be");
+        AdWhirlLayout adWhirlLayout2 = new AdWhirlLayout(this, "46a9e26bb1f5499ab7b00c9807ae034b");
         adWhirlLayout2.setAdWhirlInterface(this);
         adWhirlLayout2.setMaxWidth(width);
         adWhirlLayout2.setMaxHeight(height);

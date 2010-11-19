@@ -88,8 +88,15 @@ public class CustomAdapter extends AdWhirlAdapter {
 				adWhirlLayout.rotateThreadedNow();
 				return;
 			}
+			
+			double density = AdWhirlUtil.getDensity(activity);
+			double px320 = AdWhirlUtil.convertToScreenPixels(320, density);
+      double px50 = AdWhirlUtil.convertToScreenPixels(50, density);
+      double px4 = AdWhirlUtil.convertToScreenPixels(4, density);
+      double px6 = AdWhirlUtil.convertToScreenPixels(6, density);
+			
 			// This may be incorrect and need to be adjusted for density.
-			iconView.setLayoutParams(new LayoutParams(320, 50));  // Size of the banner
+			iconView.setLayoutParams(new LayoutParams((int)px320, (int)px50));  // Size of the banner
 			ImageView blendView = new ImageView(activity);
 			int backgroundColor = Color.rgb(adWhirlLayout.extra.bgRed, adWhirlLayout.extra.bgGreen, adWhirlLayout.extra.bgBlue);
 			GradientDrawable blend = new GradientDrawable(Orientation.TOP_BOTTOM, new int[] {Color.WHITE, backgroundColor, backgroundColor, backgroundColor}); 
@@ -99,7 +106,7 @@ public class CustomAdapter extends AdWhirlAdapter {
 			ImageView iconImageView = new ImageView(activity);
 			iconImageView.setImageDrawable(adWhirlLayout.custom.image);
 			iconImageView.setId(10);
-			iconImageView.setPadding(4, 0, 6, 0);
+			iconImageView.setPadding((int)px4, 0, (int)px6, 0);
 			iconImageView.setScaleType(ScaleType.CENTER);
 			RelativeLayout.LayoutParams iconViewParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
 			iconView.addView(iconImageView, iconViewParams);
@@ -107,7 +114,7 @@ public class CustomAdapter extends AdWhirlAdapter {
 			InputStream drawableStream = getClass().getResourceAsStream("/com/adwhirl/assets/ad_frame.gif"); 
 			Drawable adFrameDrawable = new BitmapDrawable(drawableStream);
 			frameImageView.setImageDrawable(adFrameDrawable);
-			frameImageView.setPadding(4, 0, 6, 0);
+			frameImageView.setPadding((int)px4, 0, (int)px6, 0);
 			frameImageView.setScaleType(ScaleType.CENTER);
 			RelativeLayout.LayoutParams frameViewParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
 			iconView.addView(frameImageView, frameViewParams);
