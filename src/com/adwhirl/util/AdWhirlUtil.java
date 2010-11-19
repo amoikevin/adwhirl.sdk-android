@@ -16,6 +16,9 @@
 
 package com.adwhirl.util;
 
+import android.app.Activity;
+import android.util.DisplayMetrics;
+
 public class AdWhirlUtil {	
 	public static final String urlConfig = "http://mob.adwhirl.com/getInfo.php?appid=%s&appver=%d&client=2";
 	public static final String urlImpression = "http://met.adwhirl.com/exmet.php?appid=%s&nid=%s&type=%d&uuid=%s&country_code=%s&appver=%d&client=2";
@@ -27,7 +30,7 @@ public class AdWhirlUtil {
 	// Don't change anything below this line
 	/***********************************************/ 
 	 
-	public static final int VERSION = 255;
+	public static final int VERSION = 260;
 
 	public static final String ADWHIRL = "AdWhirl SDK";
 	
@@ -54,6 +57,8 @@ public class AdWhirlUtil {
 	public static final int CUSTOM_TYPE_BANNER = 1;
 	public static final int CUSTOM_TYPE_ICON = 2;
 	
+	private static double density = -1;
+	
 	public static String convertToHex(byte[] data) {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < data.length; i++) {
@@ -69,4 +74,52 @@ public class AdWhirlUtil {
         }
         return buf.toString();
     }
+	
+
+  /**
+   * Gets the screen density for the device.
+   * 
+   * @param activity
+   *          is the current activity.
+   * 
+   * @return A double value representing the device's screen density.
+   */
+  public static double getDensity(Activity activity) {
+    if (density == -1) {
+      DisplayMetrics displayMetrics = new DisplayMetrics();
+      activity.getWindowManager().getDefaultDisplay()
+          .getMetrics(displayMetrics);
+      density = displayMetrics.density;
+    }
+
+    return density;
+  }
+
+  /**
+   * Converts device independent pixels to screen pixels.
+   * 
+   * @param dipPixels
+   *          is the amount of device independent pixels.
+   * @param density
+   *          is the device's screen density.
+   * 
+   * @return An integer representing the value in screen pixels.
+   */
+  public static int convertToScreenPixels(int dipPixels, double density) {
+    return (int) convertToScreenPixels((double) dipPixels, density);
+  }
+
+  /**
+   * Converts device independent pixels to screen pixels.
+   * 
+   * @param dipPixels
+   *          is the amount of device independent pixels.
+   * @param density
+   *          is the device's screen density.
+   * 
+   * @return A double representing the value in screen pixels.
+   */
+  public static double convertToScreenPixels(double dipPixels, double density) {
+    return (density > 0) ? (dipPixels * density) : dipPixels;
+  }
 }
