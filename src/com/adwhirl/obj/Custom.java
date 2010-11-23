@@ -12,18 +12,19 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 
 package com.adwhirl.obj;
 
 import android.graphics.drawable.Drawable;
 
 public class Custom {
-	public int type;
-	public String link;
-	public Drawable image;
-	public String imageLink;
-	public String description;
-	
-	public Custom() {}
+  public int type;
+  public String link;
+  public Drawable image;
+  public String imageLink;
+  public String description;
+
+  public Custom() {
+  }
 }

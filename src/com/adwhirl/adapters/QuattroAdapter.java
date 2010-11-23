@@ -12,20 +12,9 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 
 package com.adwhirl.adapters;
-
-import java.util.GregorianCalendar;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.adwhirl.AdWhirlLayout;
 import com.adwhirl.AdWhirlTargeting;
@@ -43,101 +32,118 @@ import com.qwapi.adclient.android.requestparams.Placement;
 import com.qwapi.adclient.android.view.AdEventsListener;
 import com.qwapi.adclient.android.view.QWAdView;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.text.TextUtils;
+import android.util.Log;
+
+import java.util.GregorianCalendar;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class QuattroAdapter extends AdWhirlAdapter implements AdEventsListener {
-	private QWAdView quattroView;
-	
-	private String siteId = null;
-	private String publisherId = null;
-	
-	public QuattroAdapter(AdWhirlLayout adWhirlLayout, Ration ration) throws JSONException {
-		super(adWhirlLayout, ration);
-		
-		JSONObject jsonObject = new JSONObject(this.ration.key);
-		siteId = jsonObject.getString("siteID");
-		publisherId = jsonObject.getString("publisherID");
-	}
-	
-	@Override
-	public void handle() {		
-	 	 AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-	 	 if(adWhirlLayout == null) {
-	 		 return;
-	 	 }
-	 	 
-	    Activity activity = adWhirlLayout.activityReference.get();
-	    if(activity == null) {
-	    	return;
-	    }
-	    
-		QWAdView quattro = new QWAdView(activity, siteId,  publisherId, MediaType.banner, Placement.top, DisplayMode.normal, 0, AnimationType.slide, this, true);
-		//Make sure to store the view, as Quattro callbacks don't have references to it
-		quattroView = quattro;
-		
-		Extra extra = adWhirlLayout.extra;
-		int bgColor = Color.rgb(extra.bgRed, extra.bgGreen, extra.bgBlue);
-		int fgColor = Color.rgb(extra.fgRed, extra.fgGreen, extra.fgBlue);
-		quattroView.setBackgroundColor(bgColor);
-		quattroView.setTextColor(fgColor);
-		
-		// Quattro callbacks will queue rotate
-	}
-	
-	// This block contains the Quattro listeners
-	/*******************************************************************/
-	public void onAdClick(Context arg0, Ad arg1) {}
+  private QWAdView quattroView;
 
-	public void onAdRequest(Context context, AdRequestParams params) {
-		if (params != null) {
-			params.setTestMode(AdWhirlTargeting.getTestMode());
+  private String siteId = null;
+  private String publisherId = null;
 
-			final AdWhirlTargeting.Gender gender = AdWhirlTargeting.getGender();
-			if (gender == AdWhirlTargeting.Gender.FEMALE) {
-				params.setGender(com.qwapi.adclient.android.requestparams.Gender.female);
-			}
-			else if (gender == AdWhirlTargeting.Gender.MALE) {
-				params.setGender(com.qwapi.adclient.android.requestparams.Gender.male);
-			}
+  public QuattroAdapter(AdWhirlLayout adWhirlLayout, Ration ration)
+      throws JSONException {
+    super(adWhirlLayout, ration);
 
-			final GregorianCalendar birthDate = AdWhirlTargeting.getBirthDate();
-			if (birthDate != null) {
-				params.setBirthDate(birthDate.getTime());
-			}
+    JSONObject jsonObject = new JSONObject(this.ration.key);
+    siteId = jsonObject.getString("siteID");
+    publisherId = jsonObject.getString("publisherID");
+  }
 
-			final String postalCode = AdWhirlTargeting.getPostalCode();
-			if (!TextUtils.isEmpty(postalCode)) {
-				params.setZipCode(postalCode);
-			}
-		}
-	}
+  @Override
+  public void handle() {
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
+    }
 
-	public void onAdRequestFailed(Context arg0, AdRequestParams arg1, Status arg2) {
-		Log.d(AdWhirlUtil.ADWHIRL, "Quattro failure");
-		quattroView.setAdEventsListener(null, false);
-		quattroView = null;
-		
-	 	 AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-	 	 if(adWhirlLayout == null) {
-	 		 return;
-	 	 }
-	 	 
-		adWhirlLayout.rollover();
-	}
+    Activity activity = adWhirlLayout.activityReference.get();
+    if (activity == null) {
+      return;
+    }
 
-	public void onAdRequestSuccessful(Context arg0, AdRequestParams arg1, Ad arg2) {
- 		Log.d(AdWhirlUtil.ADWHIRL, "Quattro success");
-		quattroView.setAdEventsListener(null, false);
+    QWAdView quattro = new QWAdView(activity, siteId, publisherId,
+        MediaType.banner, Placement.top, DisplayMode.normal, 0,
+        AnimationType.slide, this, true);
+    // Make sure to store the view, as Quattro callbacks don't have references
+    // to it
+    quattroView = quattro;
 
-	 	 AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-	 	 if(adWhirlLayout == null) {
-	 		 return;
-	 	 }
-	 	 
- 		adWhirlLayout.adWhirlManager.resetRollover();
- 		adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, quattroView));
-		adWhirlLayout.rotateThreadedDelayed();
-	}
+    Extra extra = adWhirlLayout.extra;
+    int bgColor = Color.rgb(extra.bgRed, extra.bgGreen, extra.bgBlue);
+    int fgColor = Color.rgb(extra.fgRed, extra.fgGreen, extra.fgBlue);
+    quattroView.setBackgroundColor(bgColor);
+    quattroView.setTextColor(fgColor);
 
-	public void onDisplayAd(Context arg0, Ad arg1) {}
-	/*******************************************************************/
-	// End of Quattro listeners
+    // Quattro callbacks will queue rotate
+  }
+
+  // This block contains the Quattro listeners
+  /*******************************************************************/
+  public void onAdClick(Context arg0, Ad arg1) {
+  }
+
+  public void onAdRequest(Context context, AdRequestParams params) {
+    if (params != null) {
+      params.setTestMode(AdWhirlTargeting.getTestMode());
+
+      final AdWhirlTargeting.Gender gender = AdWhirlTargeting.getGender();
+      if (gender == AdWhirlTargeting.Gender.FEMALE) {
+        params
+            .setGender(com.qwapi.adclient.android.requestparams.Gender.female);
+      } else if (gender == AdWhirlTargeting.Gender.MALE) {
+        params.setGender(com.qwapi.adclient.android.requestparams.Gender.male);
+      }
+
+      final GregorianCalendar birthDate = AdWhirlTargeting.getBirthDate();
+      if (birthDate != null) {
+        params.setBirthDate(birthDate.getTime());
+      }
+
+      final String postalCode = AdWhirlTargeting.getPostalCode();
+      if (!TextUtils.isEmpty(postalCode)) {
+        params.setZipCode(postalCode);
+      }
+    }
+  }
+
+  public void onAdRequestFailed(Context arg0, AdRequestParams arg1, Status arg2) {
+    Log.d(AdWhirlUtil.ADWHIRL, "Quattro failure");
+    quattroView.setAdEventsListener(null, false);
+    quattroView = null;
+
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
+    }
+
+    adWhirlLayout.rollover();
+  }
+
+  public void onAdRequestSuccessful(Context arg0, AdRequestParams arg1, Ad arg2) {
+    Log.d(AdWhirlUtil.ADWHIRL, "Quattro success");
+    quattroView.setAdEventsListener(null, false);
+
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
+    }
+
+    adWhirlLayout.adWhirlManager.resetRollover();
+    adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, quattroView));
+    adWhirlLayout.rotateThreadedDelayed();
+  }
+
+  public void onDisplayAd(Context arg0, Ad arg1) {
+  }
+  /*******************************************************************/
+  // End of Quattro listeners
 }

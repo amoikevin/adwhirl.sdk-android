@@ -58,9 +58,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This file was provided by MdotM. Please contact support@mdotm.com with any questions or concerns.
+ * This file was provided by MdotM. Please contact support@mdotm.com with any
+ * questions or concerns.
  */
-public class MdotMAdapter extends AdWhirlAdapter implements MdotMActionListener{
+public class MdotMAdapter extends AdWhirlAdapter implements MdotMActionListener {
   public MdotMAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
     super(adWhirlLayout, ration);
   }
@@ -68,7 +69,7 @@ public class MdotMAdapter extends AdWhirlAdapter implements MdotMActionListener{
   @Override
   public void handle() {
     AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-    if(adWhirlLayout == null) {
+    if (adWhirlLayout == null) {
       return;
     }
 
@@ -76,13 +77,13 @@ public class MdotMAdapter extends AdWhirlAdapter implements MdotMActionListener{
       MdotMManager.setPublisherId(this.ration.key);
     }
     // Thrown on invalid publisher id
-    catch(IllegalArgumentException e) {
+    catch (IllegalArgumentException e) {
       adWhirlLayout.rollover();
       return;
     }
 
     Activity activity = adWhirlLayout.activityReference.get();
-    if(activity == null) {
+    if (activity == null) {
       return;
     }
     MdotMView mdotm = new MdotMView(activity, this);
@@ -94,15 +95,15 @@ public class MdotMAdapter extends AdWhirlAdapter implements MdotMActionListener{
 
     mdotm.setBackgroundColor(bgColor);
     mdotm.setTextColor(fgColor);
-  }	
+  }
 
   public void adRequestCompletedSuccessfully(MdotMView adView) {
     Log.d(AdWhirlUtil.ADWHIRL, "MdotM success");
 
     AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-    if(adWhirlLayout == null) {
+    if (adWhirlLayout == null) {
       return;
-    }		
+    }
     adView.setListener(null);
     adView.setVisibility(View.VISIBLE);
 
@@ -116,7 +117,7 @@ public class MdotMAdapter extends AdWhirlAdapter implements MdotMActionListener{
     adView.setListener(null);
 
     AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-    if(adWhirlLayout == null) {
+    if (adWhirlLayout == null) {
       return;
     }
     adWhirlLayout.rollover();
@@ -127,7 +128,7 @@ class MdotMView extends RelativeLayout {
   private static final String MDOTM_BASE_URL = "http://ads.mdotm.com/ads/feed.php?";
 
   private String adLandingUrl;
-  private MdotMActionListener listener;	
+  private MdotMActionListener listener;
   private boolean adSelectionInProgress;
 
   private ProgressBar activityIndicator;
@@ -142,9 +143,9 @@ class MdotMView extends RelativeLayout {
   private static final double GRADIENT_STOP = 0.4375;
 
   /**
-   * The color of a mask applied over the entire view when the user presses
-   * down on the ad to signal they are going to click it. iPhone uses a 0.5
-   * alpha blended with grey 1/2 way on the greyscale (0x88888888).
+   * The color of a mask applied over the entire view when the user presses down
+   * on the ad to signal they are going to click it. iPhone uses a 0.5 alpha
+   * blended with grey 1/2 way on the greyscale (0x88888888).
    */
   private static final int HIGHLIGHT_COLOR = 0xFFFFB400; // Android yellow
 
@@ -153,7 +154,8 @@ class MdotMView extends RelativeLayout {
    * <code>HIGHLIGHT_COLOR</code> is applied. This color is analygous to
    * <code>GRADIENT_BACKGROUND_COLOR</code>.
    */
-  private static final int HIGHLIGHT_BACKGROUND_COLOR = 0xFFEE7F27; // android orange
+  private static final int HIGHLIGHT_BACKGROUND_COLOR = 0xFFEE7F27; // android
+                                                                    // orange
 
   private int padding;
   private int textColor = Color.WHITE;
@@ -162,16 +164,18 @@ class MdotMView extends RelativeLayout {
   private Drawable adSelectedBackground;
   private Drawable defaultBackground;
 
-  private  boolean isAdClicked = false;
-  private static final Typeface AD_FONT = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
+  private boolean isAdClicked = false;
+  private static final Typeface AD_FONT = Typeface.create(Typeface.SANS_SERIF,
+      Typeface.BOLD);
 
-  public interface MdotMActionListener {		
-    public void adRequestCompletedSuccessfully(MdotMView adView) ;
+  public interface MdotMActionListener {
+    public void adRequestCompletedSuccessfully(MdotMView adView);
+
     public void adRequestFailed(MdotMView adView);
   }
 
-  public MdotMView(Context context, MdotMActionListener listener) {	
-    super(context);	
+  public MdotMView(Context context, MdotMActionListener listener) {
+    super(context);
     this.listener = listener;
     init();
     setAdSelectionInProgress(false);
@@ -180,40 +184,46 @@ class MdotMView extends RelativeLayout {
   /**
    * Constructs an advertisement view from a layout XML file.
    * 
-   * @param context is the application's context.
-   * @param attrs are attributes set in the XML layout for this view.
+   * @param context
+   *          is the application's context.
+   * @param attrs
+   *          are attributes set in the XML layout for this view.
    * 
-   * @see android.view.View#View(android.content.Context, android.util.AttributeSet)
+   * @see android.view.View#View(android.content.Context,
+   *      android.util.AttributeSet)
    */
-  public MdotMView( Context context, AttributeSet attrs ){	
-    this( context, attrs, 0 );
+  public MdotMView(Context context, AttributeSet attrs) {
+    this(context, attrs, 0);
   }
 
   /**
    * Constructs an advertisement view from a layout XML file.
    * 
-   * @param context is the application's context.
-   * @param attrs are attributes set in the XML layout for this view.
-   * @param defStyle is the theme ID to apply to this view.
+   * @param context
+   *          is the application's context.
+   * @param attrs
+   *          are attributes set in the XML layout for this view.
+   * @param defStyle
+   *          is the theme ID to apply to this view.
    * 
    * @see android.view.View#View(Context, AttributeSet, int)
    */
-  public MdotMView( Context context, AttributeSet attrs, int defStyle ){	
-    super( context, attrs, defStyle );
+  public MdotMView(Context context, AttributeSet attrs, int defStyle) {
+    super(context, attrs, defStyle);
   }
 
-  private void init() {	
+  private void init() {
     fetchAd();
-    setFocusable( true );
-    setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS );	
-    setClickable( true );
+    setFocusable(true);
+    setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+    setClickable(true);
   }
 
   @Override
   public boolean dispatchKeyEvent(KeyEvent event) {
-    int action =  event.getAction();
-    if(! this.isAdClicked ) {
-      if(action == MotionEvent.ACTION_UP){
+    int action = event.getAction();
+    if (!this.isAdClicked) {
+      if (action == MotionEvent.ACTION_UP) {
         isAdClicked = true;
         clicked();
       }
@@ -223,7 +233,7 @@ class MdotMView extends RelativeLayout {
 
   @Override
   public boolean dispatchTouchEvent(MotionEvent motionEvent) {
-    int action =  motionEvent.getAction();
+    int action = motionEvent.getAction();
     float x = motionEvent.getX();
     float y = motionEvent.getY();
 
@@ -235,19 +245,19 @@ class MdotMView extends RelativeLayout {
     Log.i(MdotMManager.LOG_TAG, "  Selected  ");
     if (x < left || x > right || y < top || y > bottom) {
       Log.i(MdotMManager.LOG_TAG, "Always outside of ad display area ");
-      if(! this.isAdClicked ) {
+      if (!this.isAdClicked) {
         drawBackgroundView(true);
       }
     } else {
-      if(action == MotionEvent.ACTION_UP) {
-        if(! this.isAdClicked ) {
+      if (action == MotionEvent.ACTION_UP) {
+        if (!this.isAdClicked) {
           isAdClicked = true;
           setClickable(false);
           clicked();
           drawBackgroundView(true);
         }
       } else if (action == MotionEvent.ACTION_DOWN) {
-        if(! this.isAdClicked ) {
+        if (!this.isAdClicked) {
           drawBackgroundView(false);
         }
       }
@@ -255,28 +265,31 @@ class MdotMView extends RelativeLayout {
     return super.dispatchTouchEvent(motionEvent);
   }
 
+  private void drawBackgroundView(boolean isDefaultBackground) {
+    Log.d("X-Value", " drawBackgroundView   :: " + isDefaultBackground);
 
-  private void drawBackgroundView(boolean isDefaultBackground){
-    Log.d("X-Value", " drawBackgroundView   :: "+isDefaultBackground);
-
-    if(defaultBackground == null ){
-      defaultBackground = populateDrawablwBackGround( Color.WHITE , backgroundColor);
+    if (defaultBackground == null) {
+      defaultBackground = populateDrawablwBackGround(Color.WHITE,
+          backgroundColor);
     }
 
-    if(adSelectedBackground == null){
-      adSelectedBackground  =  populateDrawablwBackGround(HIGHLIGHT_BACKGROUND_COLOR, HIGHLIGHT_COLOR );			
+    if (adSelectedBackground == null) {
+      adSelectedBackground = populateDrawablwBackGround(
+          HIGHLIGHT_BACKGROUND_COLOR, HIGHLIGHT_COLOR);
     }
 
-    if(isDefaultBackground ){        	
+    if (isDefaultBackground) {
       setBackgroundDrawable(defaultBackground);
-    }else{
+    } else {
       setBackgroundDrawable(adSelectedBackground);
     }
   }
 
-  private static Drawable populateDrawablwBackGround(int backgroundColor, int color){		
-    Rect rect = new Rect(0,0,320,48);
-    Bitmap bitmap = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
+  private static Drawable populateDrawablwBackGround(int backgroundColor,
+      int color) {
+    Rect rect = new Rect(0, 0, 320, 48);
+    Bitmap bitmap = Bitmap.createBitmap(rect.width(), rect.height(),
+        Bitmap.Config.ARGB_8888);
     Canvas canvas = new Canvas(bitmap);
 
     Paint paint = new Paint();
@@ -308,86 +321,100 @@ class MdotMView extends RelativeLayout {
     return new BitmapDrawable(bitmap);
   }
 
-
-
   private void clicked() {
     Log.i(MdotMManager.LOG_TAG, "  Selected to clicked  ");
 
-    if(this.adLandingUrl !=  null){
-      //   Open up the browser with the clicked URL.
-      //   This can also open the Market application.  For example the click URL
-      //   to Ringer Mobile is:  http://market.android.com/details?id=6278196384529742763			
-      //   The ID in the URL can be obtained on the Market's main developer console by
-      //   hovering over the link of your application.
+    if (this.adLandingUrl != null) {
+      // Open up the browser with the clicked URL.
+      // This can also open the Market application. For example the click URL
+      // to Ringer Mobile is:
+      // http://market.android.com/details?id=6278196384529742763
+      // The ID in the URL can be obtained on the Market's main developer
+      // console by
+      // hovering over the link of your application.
 
       // walk down the 302 redirects on the clicked url until we get a real url.
       // we need to do this asynchronously.
 
-      if(!isAdSelectionInProgress()){
+      if (!isAdSelectionInProgress()) {
         final String clickedUrl = this.adLandingUrl;
         setAdSelectionInProgress(true);
         showActivityIndicator();
         new Thread() {
 
+          @Override
           public void run() {
 
             URL destinationURL = null;
-            try{
+            try {
 
-              URL url = new URL( clickedUrl );
+              URL url = new URL(clickedUrl);
               destinationURL = url;
 
-              HttpURLConnection.setFollowRedirects( true );
+              HttpURLConnection.setFollowRedirects(true);
 
-              HttpURLConnection redirectConnection = (HttpURLConnection) url.openConnection();
+              HttpURLConnection redirectConnection = (HttpURLConnection) url
+                  .openConnection();
               redirectConnection.setConnectTimeout(500);
-              redirectConnection.setRequestProperty( "User-Agent", MdotMManager.getUserAgent() );  
+              redirectConnection.setRequestProperty("User-Agent", MdotMManager
+                  .getUserAgent());
               redirectConnection.connect();
               redirectConnection.getResponseCode();
               destinationURL = redirectConnection.getURL();
 
-              if ( Log.isLoggable( MdotMManager.LOG_TAG, Log.DEBUG ) ) {
-                Log.d( MdotMManager.LOG_TAG, " Final click destination URL:  " + destinationURL );
+              if (Log.isLoggable(MdotMManager.LOG_TAG, Log.DEBUG)) {
+                Log.d(MdotMManager.LOG_TAG, " Final click destination URL:  "
+                    + destinationURL);
               }
 
             } catch (MalformedURLException e) {
-              Log.w(  MdotMManager.LOG_TAG, "Malformed click URL.  Will try to follow anyway.  " + clickedUrl, e );
+              Log.w(MdotMManager.LOG_TAG,
+                  "Malformed click URL.  Will try to follow anyway.  "
+                      + clickedUrl, e);
             } catch (IOException e) {
-              Log.w(  MdotMManager.LOG_TAG, "Could not determine final click destination URL.  Will try to follow anyway.  " + clickedUrl, e );
+              Log
+                  .w(
+                      MdotMManager.LOG_TAG,
+                      "Could not determine final click destination URL.  Will try to follow anyway.  "
+                          + clickedUrl, e);
             }
 
-            if ( destinationURL != null )  {
-              if ( Log.isLoggable(  MdotMManager.LOG_TAG, Log.DEBUG ) ) {	
-                Log.d(  MdotMManager.LOG_TAG, "Opening " + destinationURL );
+            if (destinationURL != null) {
+              if (Log.isLoggable(MdotMManager.LOG_TAG, Log.DEBUG)) {
+                Log.d(MdotMManager.LOG_TAG, "Opening " + destinationURL);
               }
 
-              // Uri doesn't understand java.net.URI so we have to URL->String->Uri
-              Intent i = new Intent( Intent.ACTION_VIEW, Uri.parse(destinationURL.toString()) );
-              i.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+              // Uri doesn't understand java.net.URI so we have to
+              // URL->String->Uri
+              Intent i = new Intent(Intent.ACTION_VIEW, Uri
+                  .parse(destinationURL.toString()));
+              i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
               try {
 
-                getContext().startActivity( i );
+                getContext().startActivity(i);
 
               } catch (Exception e) {
 
-                Log.e( MdotMManager.LOG_TAG, "Could not open browser on ad click to " + destinationURL, e );
+                Log.e(MdotMManager.LOG_TAG,
+                    "Could not open browser on ad click to " + destinationURL,
+                    e);
               }
             }
 
-            // Lets reset clickable and progress flag 
+            // Lets reset clickable and progress flag
             adNetworkCompleted();
           }
-        }.start();	  
-      } else {	
+        }.start();
+      } else {
         Log.w(MdotMManager.LOG_TAG, "ad selection under progress");
-      }  
-    }else{
+      }
+    } else {
       Log.w(MdotMManager.LOG_TAG, "selected ad is null");
     }
   }
 
-  private void adNetworkCompleted(){
+  private void adNetworkCompleted() {
     Log.w(MdotMManager.LOG_TAG, "On ad network completed");
     setClickable(true);
     setAdSelectionInProgress(false);
@@ -395,8 +422,9 @@ class MdotMView extends RelativeLayout {
     hideActivityIndicator();
   }
 
-  private void showActivityIndicator(){
-    post(new Thread(){
+  private void showActivityIndicator() {
+    post(new Thread() {
+      @Override
       public void run() {
         if (activityIndicator != null) {
           activityIndicator.setVisibility(VISIBLE);
@@ -406,8 +434,9 @@ class MdotMView extends RelativeLayout {
     });
   }
 
-  private void hideActivityIndicator(){
-    post(new Thread(){
+  private void hideActivityIndicator() {
+    post(new Thread() {
+      @Override
       public void run() {
         if (activityIndicator != null) {
           activityIndicator.setVisibility(INVISIBLE);
@@ -417,22 +446,22 @@ class MdotMView extends RelativeLayout {
     });
   }
 
-  private void setAdSelectionInProgress(boolean isProgress){
-    this.adSelectionInProgress =  isProgress;
+  private void setAdSelectionInProgress(boolean isProgress) {
+    this.adSelectionInProgress = isProgress;
   }
 
-  private boolean isAdSelectionInProgress(){
+  private boolean isAdSelectionInProgress() {
     return adSelectionInProgress;
   }
 
-  private  String generateURLString(){
+  private String generateURLString() {
     StringBuilder urlBuilder = new StringBuilder(MDOTM_BASE_URL);
 
-    // Ad (AdWhirl SDK) version 
+    // Ad (AdWhirl SDK) version
     urlBuilder.append("appver=");
     urlBuilder.append(AdWhirlUtil.VERSION);
 
-    // Android OS version 
+    // Android OS version
     urlBuilder.append("&v=");
     urlBuilder.append(MdotMManager.getSystemVersion());
 
@@ -444,7 +473,7 @@ class MdotMView extends RelativeLayout {
 
     urlBuilder.append("&deviceid=");
     try {
-      urlBuilder.append(MdotMManager.getDeviceId( getContext() ));
+      urlBuilder.append(MdotMManager.getDeviceId(getContext()));
     } catch (NoSuchAlgorithmException e) {
       urlBuilder.append("00000000000000000000000000000000");
     }
@@ -456,14 +485,15 @@ class MdotMView extends RelativeLayout {
     urlBuilder.append(50);
 
     urlBuilder.append("&fmt=");
-    urlBuilder.append("json"); 
+    urlBuilder.append("json");
 
     urlBuilder.append("&ua=");
     try {
-      urlBuilder.append( URLEncoder.encode(MdotMManager.getUserAgent(), "UTF-8") );
+      urlBuilder
+          .append(URLEncoder.encode(MdotMManager.getUserAgent(), "UTF-8"));
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
-    } 
+    }
 
     urlBuilder.append("&test=");
     urlBuilder.append(MdotMManager.getTestModeValue());
@@ -471,17 +501,17 @@ class MdotMView extends RelativeLayout {
     return urlBuilder.toString();
   }
 
-  private void fetchAd(){
+  private void fetchAd() {
     Log.d(MdotMManager.LOG_TAG, "  fetching Ad started ");
 
-    String urlString =  generateURLString();
-    Log.d(MdotMManager.LOG_TAG, "   Genrerated url "+urlString);
+    String urlString = generateURLString();
+    Log.d(MdotMManager.LOG_TAG, "   Genrerated url " + urlString);
 
     HttpResponse httpResponse;
     HttpClient httpClient = new DefaultHttpClient();
-    HttpGet httpGet = new HttpGet(urlString); 
+    HttpGet httpGet = new HttpGet(urlString);
 
-    try {        	
+    try {
       httpResponse = httpClient.execute(httpGet);
       Log.d(MdotMManager.LOG_TAG, httpResponse.getStatusLine().toString());
 
@@ -489,21 +519,21 @@ class MdotMView extends RelativeLayout {
 
       if (entity != null) {
         InputStream inputStream = entity.getContent();
-        String jsonString = convertStreamToString(inputStream);  
-        AdUnit adunit =  generateAdUnitFromJsonString(jsonString);
+        String jsonString = convertStreamToString(inputStream);
+        AdUnit adunit = generateAdUnitFromJsonString(jsonString);
         initializeAdView(adunit, getContext());
       }
     } catch (ClientProtocolException e) {
-      Log.e(MdotMManager.LOG_TAG, "Caught ClientProtocolException in getCustom()", e);
+      Log.e(MdotMManager.LOG_TAG,
+          "Caught ClientProtocolException in getCustom()", e);
     } catch (IOException e) {
       Log.e(MdotMManager.LOG_TAG, "Caught IOException in getCustom()", e);
-    }	
+    }
   }
 
+  private void initializeAdView(AdUnit ad, Context context) {
 
-  private void initializeAdView(AdUnit ad, Context context){
-
-    if ( ad != null ) {
+    if (ad != null) {
 
       this.adLandingUrl = ad.landingUrl;
       // The user can interact with the ad by clicking on it.
@@ -514,43 +544,46 @@ class MdotMView extends RelativeLayout {
 
       padding = 8;
 
-      if( icon != null ) {
+      if (icon != null) {
         // put it into a view and push it into the ad.
 
         activityIndicator = new ProgressBar(getContext());
         activityIndicator.setIndeterminate(false);
-        LayoutParams activityParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LayoutParams activityParams = new LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT);
         activityIndicator.setLayoutParams(activityParams);
         activityIndicator.setVisibility(INVISIBLE);
         activityIndicator.setMinimumHeight(20);
         activityIndicator.setMinimumWidth(20);
         activityIndicator.setMax(100);
-        activityIndicator.setBackgroundDrawable(defaultBackground);                  
+        activityIndicator.setBackgroundDrawable(defaultBackground);
 
         // set the attributes.
-        if ( ad.adType == AdUnit.AD_BANNER ) {
-          createAdWithBannerView(icon );
-          if(activityIndicator !=  null){
+        if (ad.adType == AdUnit.AD_BANNER) {
+          createAdWithBannerView(icon);
+          if (activityIndicator != null) {
             activityIndicator.setId(2); // for alignment.
             activityParams.addRule(ALIGN_PARENT_RIGHT);
           }
 
-        } else if ( ad.adType == AdUnit.AD_ICON_WITH_TEXT_MESSAGE ) {
+        } else if (ad.adType == AdUnit.AD_ICON_WITH_TEXT_MESSAGE) {
 
           createAdWithIconView(icon, ad);
-          if(activityIndicator !=  null){
+          if (activityIndicator != null) {
             activityIndicator.setId(3); // for alignment.
             activityParams.addRule(ALIGN_PARENT_RIGHT);
           }
 
         } else {
 
-          Log.w(MdotMManager.LOG_TAG, "Woooo!! unable to display ad, We got unsupported ad type.");
+          Log.w(MdotMManager.LOG_TAG,
+              "Woooo!! unable to display ad, We got unsupported ad type.");
           onAdViewFailure();
           return;
-        }         
+        }
 
-        if(activityIndicator != null){
+        if (activityIndicator != null) {
 
           addView(activityIndicator);
         }
@@ -563,7 +596,7 @@ class MdotMView extends RelativeLayout {
       setVisibility(visibility);
       onAdViewSuccess();
 
-    }else{
+    } else {
 
       Log.w(MdotMManager.LOG_TAG, "Ad is not loaded");
       onAdViewFailure();
@@ -571,38 +604,38 @@ class MdotMView extends RelativeLayout {
     }
   }
 
+  private void onAdViewSuccess() {
 
-  private void onAdViewSuccess(){
-
-    if( listener !=  null ){
+    if (listener != null) {
       listener.adRequestCompletedSuccessfully(this);
     } else {
-      Log.d(MdotMManager.LOG_TAG, "  Unable to call mdotmListenres while success of AdView ");
+      Log.d(MdotMManager.LOG_TAG,
+          "  Unable to call mdotmListenres while success of AdView ");
     }
   }
 
+  private void onAdViewFailure() {
 
-  private void onAdViewFailure(){
-
-    if( listener !=  null){	   
+    if (listener != null) {
 
       listener.adRequestFailed(this);
 
-    }else{
+    } else {
 
-      Log.d(MdotMManager.LOG_TAG, " Unable to call mdotmListenres  while failure of AdView");
+      Log.d(MdotMManager.LOG_TAG,
+          " Unable to call mdotmListenres  while failure of AdView");
     }
   }
 
-
-  private void createAdWithBannerView(Bitmap icon){
+  private void createAdWithBannerView(Bitmap icon) {
 
     ImageView bannerView = new ImageView(getContext());
     bannerView.setImageBitmap(icon);
 
-    //padding = (AdView.HEIGHT - icon.getHeight())/2;
-    padding = (52 - icon.getHeight())/2;
-    LayoutParams params =	new LayoutParams(  ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+    // padding = (AdView.HEIGHT - icon.getHeight())/2;
+    padding = (52 - icon.getHeight()) / 2;
+    LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+        ViewGroup.LayoutParams.FILL_PARENT);
     params.setMargins(padding, padding, 0, padding);
 
     bannerView.setLayoutParams(params);
@@ -610,90 +643,93 @@ class MdotMView extends RelativeLayout {
     addView(bannerView);
   }
 
-
-  private void createAdWithIconView(Bitmap icon, AdUnit ad){  
+  private void createAdWithIconView(Bitmap icon, AdUnit ad) {
     ImageView iconView = new ImageView(getContext());
     iconView.setImageBitmap(icon);
 
-    LayoutParams  params = new LayoutParams(icon.getWidth(), icon.getHeight());
+    LayoutParams params = new LayoutParams(icon.getWidth(), icon.getHeight());
     params.setMargins(padding, padding, 0, padding);
     iconView.setLayoutParams(params);
 
     iconView.setId(1);
     addView(iconView);
 
-    TextView  adTextView = new TextView( getContext());
-    adTextView.setText( ad.adText);
+    TextView adTextView = new TextView(getContext());
+    adTextView.setText(ad.adText);
     adTextView.setTypeface(AD_FONT);
     adTextView.setTextColor(textColor);
     adTextView.setTextSize(13.0f);
     adTextView.setId(2);
 
-    LayoutParams adTextViewParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    LayoutParams adTextViewParams = new LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT);
     // if the icon was not null then align with that too.
-    if(icon != null){    	
+    if (icon != null) {
 
       adTextViewParams.addRule(RIGHT_OF, 1);
     }
 
-    //left top right  bottom
-    adTextViewParams.setMargins( 20, 4, 10, 10 );
-    adTextViewParams.addRule(CENTER_IN_PARENT );
-    //adTextViewParams.addRule(ALIGN_PARENT_TOP);
+    // left top right bottom
+    adTextViewParams.setMargins(20, 4, 10, 10);
+    adTextViewParams.addRule(CENTER_IN_PARENT);
+    // adTextViewParams.addRule(ALIGN_PARENT_TOP);
     adTextView.setLayoutParams(adTextViewParams);
 
     addView(adTextView);
     setGravity(CENTER_HORIZONTAL | CENTER_VERTICAL);
   }
 
-
   private AdUnit generateAdUnitFromJsonString(String jsonString) {
 
-    if(jsonString == null ){
-      return  null;
+    if (jsonString == null) {
+      return null;
     }
 
     jsonString = jsonString.replace("[", "");
     jsonString = jsonString.replace("]", "");
 
-    if(jsonString.trim().length() < 1){
+    if (jsonString.trim().length() < 1) {
       Log.d(MdotMManager.LOG_TAG, "Neglecting, Invalid AD response.");
-      return  null;
+      return null;
     }
 
-    JSONObject jsonObject =  null;
+    JSONObject jsonObject = null;
     try {
 
-      jsonObject =  new JSONObject(jsonString);
+      jsonObject = new JSONObject(jsonString);
 
     } catch (JSONException exception) {
 
-      Log.d(MdotMManager.LOG_TAG, "Caught JSONException while creating JSON object from string:  "+jsonString);
-      jsonObject =  null;
+      Log.d(MdotMManager.LOG_TAG,
+          "Caught JSONException while creating JSON object from string:  "
+              + jsonString);
+      jsonObject = null;
       exception.printStackTrace();
     }
 
-    if( jsonObject == null ){
+    if (jsonObject == null) {
 
       return null;
 
     }
 
-    AdUnit adUnit =  new AdUnit();
+    AdUnit adUnit = new AdUnit();
 
     try {
 
       adUnit.adType = jsonObject.getInt("ad_type");
       adUnit.launchType = jsonObject.getInt("launch_type");
-      adUnit.adText=jsonObject.getString("ad_text");
-      adUnit.imageUrl=jsonObject.getString("img_url");
-      adUnit.landingUrl=jsonObject.getString("landing_url");
+      adUnit.adText = jsonObject.getString("ad_text");
+      adUnit.imageUrl = jsonObject.getString("img_url");
+      adUnit.landingUrl = jsonObject.getString("landing_url");
       Log.d(MdotMManager.LOG_TAG, "Created MdotM adUnit successfully");
 
     } catch (JSONException e) {
 
-      adUnit =  null;
-      Log.d(MdotMManager.LOG_TAG, "Caught JSONException in generateAdUnitFromJsonString()", e);
+      adUnit = null;
+      Log.d(MdotMManager.LOG_TAG,
+          "Caught JSONException in generateAdUnitFromJsonString()", e);
       e.printStackTrace();
     }
 
@@ -701,7 +737,8 @@ class MdotMView extends RelativeLayout {
   }
 
   private String convertStreamToString(InputStream inputStream) {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), 8192);
+    BufferedReader reader = new BufferedReader(new InputStreamReader(
+        inputStream), 8192);
     StringBuilder sb = new StringBuilder();
 
     String line = null;
@@ -710,69 +747,78 @@ class MdotMView extends RelativeLayout {
         sb.append(line + "\n");
       }
     } catch (IOException e) {
-      Log.e(AdWhirlUtil.ADWHIRL, "Caught IOException in convertStreamToString()", e);
+      Log.e(AdWhirlUtil.ADWHIRL,
+          "Caught IOException in convertStreamToString()", e);
       return null;
     } finally {
       try {
-        if( inputStream !=  null ) {
+        if (inputStream != null) {
           inputStream.close();
         }
       } catch (IOException e) {
-        Log.e(AdWhirlUtil.ADWHIRL, "Caught IOException while closing inputStream in convertStreamToString()", e);
+        Log
+            .e(
+                AdWhirlUtil.ADWHIRL,
+                "Caught IOException while closing inputStream in convertStreamToString()",
+                e);
       }
 
       try {
-        if( reader !=  null ) {
+        if (reader != null) {
           reader.close();
         }
       } catch (IOException e) {
-        Log.e(AdWhirlUtil.ADWHIRL, "Caught IOException while closing reader in convertStreamToString()", e);	
-      }	
+        Log
+            .e(
+                AdWhirlUtil.ADWHIRL,
+                "Caught IOException while closing reader in convertStreamToString()",
+                e);
+      }
     }
 
     if (sb == null) {
-      return  null;
+      return null;
     }
 
     return sb.toString();
   }
 
-  private static Bitmap fetchImage( String imageURL, boolean useCaches ) {
+  private static Bitmap fetchImage(String imageURL, boolean useCaches) {
     Bitmap image = null;
-    if ( imageURL != null ) {
+    if (imageURL != null) {
       InputStream is = null;
-      try{
+      try {
         // Open a new URL and get the InputStream to load data from it.
-        URL url = new URL( imageURL );
+        URL url = new URL(imageURL);
         URLConnection conn = url.openConnection();
-        conn.setConnectTimeout( 0 );
-        conn.setReadTimeout( 0 );
-        conn.setUseCaches( useCaches );
+        conn.setConnectTimeout(0);
+        conn.setReadTimeout(0);
+        conn.setUseCaches(useCaches);
         conn.connect();
         is = conn.getInputStream();
 
         // Create a bitmap.
-        image = BitmapFactory.decodeStream( is );
+        image = BitmapFactory.decodeStream(is);
 
-        // Note we do not want to save the image to the file system. 
+        // Note we do not want to save the image to the file system.
       } catch (Throwable e) {
         image = null;
-        Log.w( MdotMManager.LOG_TAG, "Problem while fetchImage()  :  " + imageURL, e );
+        Log.w(MdotMManager.LOG_TAG, "Problem while fetchImage()  :  "
+            + imageURL, e);
       } finally {
-        if ( is != null ){
-          try{
-            is.close();		
-          }catch (IOException e) {
-            // We are ignoring and continuing 
+        if (is != null) {
+          try {
+            is.close();
+          } catch (IOException e) {
+            // We are ignoring and continuing
           }
         }
       }
-    }else{
-      Log.w( MdotMManager.LOG_TAG, "Image url is null" );
+    } else {
+      Log.w(MdotMManager.LOG_TAG, "Image url is null");
     }
     return image;
   }
-
 
   public void setTextColor(int textColor) {
     this.textColor = textColor;
@@ -780,8 +826,9 @@ class MdotMView extends RelativeLayout {
 
   public int getTextColor() {
     return textColor;
-  } 
+  }
 
+  @Override
   public void setBackgroundColor(int backgroundColor) {
     this.backgroundColor = backgroundColor;
   }
@@ -804,23 +851,21 @@ class MdotMView extends RelativeLayout {
 
   public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
     return false;
-  } 
+  }
 }
 
-class AdUnit {	
+class AdUnit {
   /**
-   * Example response from server 
-	[{"img_url":"http:\/\/ads.mdotm.com\/ads\/test\/2-320-static.png",
-		"landing_url":"http:\/\/www.mdotm.com\/apps\/click\/mdotm\/76af29cc28109e55d57bd707fbec72c4\/38aa07b5\/39F71E34-F5E7-5EE1-97F0-53743753AF54",
-		"ad_type":1,
-		"ad_text":"",
-		"launch_type":1}]
+   * Example response from server
+   * [{"img_url":"http:\/\/ads.mdotm.com\/ads\/test\/2-320-static.png",
+   * "landing_url":"http:\/\/www.mdotm.com\/apps\/click\/mdotm\/76af29cc28109e55d57bd707fbec72c4\/38aa07b5\/39F71E34-F5E7-5EE1-97F0-53743753AF54"
+   * , "ad_type":1, "ad_text":"", "launch_type":1}]
    */
 
   public static final int AD_BANNER = 1;
   public static final int AD_ICON_WITH_TEXT_MESSAGE = 2;
 
-  public static final int AD_LAUNCH_TYPE_ON_SAFARI= 1;
+  public static final int AD_LAUNCH_TYPE_ON_SAFARI = 1;
   public static final int AD_LAUNCH_TYPE_ON_CANVAS = 2;
 
   public int adType;
@@ -829,9 +874,9 @@ class AdUnit {
   public String landingUrl;
   public String imageUrl;
 
-  public AdUnit(){		
+  public AdUnit() {
 
-  }	
+  }
 }
 
 class MdotMManager {
@@ -844,24 +889,25 @@ class MdotMManager {
   private static boolean testMode = false;
   private static String systemVersion = null;
 
-  public static int getTestModeValue(){
+  public static int getTestModeValue() {
     // If app under test mode 1 other wise 2
-    return ( isTestMode() ) ? 1 : 2 ;
+    return (isTestMode()) ? 1 : 2;
   }
 
-  private static boolean isTestMode(){	
+  private static boolean isTestMode() {
     return testMode;
   }
 
-  public static String getDeviceId( Context context ) throws NoSuchAlgorithmException{
-    if(( devicId == null ) || (devicId.length() < 32 )){
-      TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+  public static String getDeviceId(Context context)
+      throws NoSuchAlgorithmException {
+    if ((devicId == null) || (devicId.length() < 32)) {
+      TelephonyManager telephonyManager = (TelephonyManager) context
+          .getSystemService(Context.TELEPHONY_SERVICE);
       devicId = telephonyManager.getDeviceId();
     }
     Log.d(MdotMManager.LOG_TAG, devicId);
     return devicId;
   }
-
 
   /**
    * Generates the User-Agent HTTP header used by the browser on this phone.
@@ -870,72 +916,75 @@ class MdotMManager {
    */
   static String getUserAgent() {
 
-    if ( userAgent == null ) {            
-      // This is copied from the Android source frameworks/base/core/java/android/webkit/WebSettings.java.
-      // It is somewhat of a hack since Android does not expose this to us but AdMob servers need it
+    if (userAgent == null) {
+      // This is copied from the Android source
+      // frameworks/base/core/java/android/webkit/WebSettings.java.
+      // It is somewhat of a hack since Android does not expose this to us but
+      // AdMob servers need it
       // for ad picking.
       StringBuffer arg = new StringBuffer();
 
       // Android version
       final String version = Build.VERSION.RELEASE;
-      if ( version.length() > 0 ){
-        arg.append( version );
+      if (version.length() > 0) {
+        arg.append(version);
       } else {
         // default to "1.0"
-        arg.append( "1.0" );
+        arg.append("1.0");
       }
-      arg.append( "; " );
+      arg.append("; ");
 
       // Initialize the mobile user agent with the default locale.
       final Locale l = Locale.getDefault();
       final String language = l.getLanguage();
-      if ( language != null ) {
+      if (language != null) {
 
-        arg.append( language.toLowerCase() );
+        arg.append(language.toLowerCase());
         final String country = l.getCountry();
 
-        if ( country != null ) {
+        if (country != null) {
 
-          arg.append( "-" );
-          arg.append( country.toLowerCase() );
+          arg.append("-");
+          arg.append(country.toLowerCase());
         }
 
-      } else{
+      } else {
         // default to "en"
-        arg.append( "en" );
+        arg.append("en");
       }
 
       // Add the device model name and Android build ID.
       final String model = Build.MODEL;
-      if ( model.length() > 0 ) {
+      if (model.length() > 0) {
 
-        arg.append( "; " );
-        arg.append( model );
+        arg.append("; ");
+        arg.append(model);
       }
 
       final String id = Build.ID;
-      if ( id.length() > 0 ) {
+      if (id.length() > 0) {
 
-        arg.append( " Build/" );
-        arg.append( id );
+        arg.append(" Build/");
+        arg.append(id);
       }
 
-      // Mozilla/5.0 (Linux; U; Android 1.0; en-us; dream) AppleWebKit/525.10+ (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2 (AdMob-ANDROID-20090701)
+      // Mozilla/5.0 (Linux; U; Android 1.0; en-us; dream) AppleWebKit/525.10+
+      // (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2
+      // (AdMob-ANDROID-20090701)
       final String base = "Mozilla/5.0 (Linux; U; Android %s) AppleWebKit/525.10+ (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2 (AdWhirl-MdotM-ANDROID-%s)";
-      userAgent = String.format( base, arg, SDK_VERSION_DATE );
+      userAgent = String.format(base, arg, SDK_VERSION_DATE);
 
-      if ( Log.isLoggable( LOG_TAG, Log.DEBUG ) ) {	
-        Log.d( LOG_TAG, "Phone's user-agent is:  " + userAgent );
+      if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+        Log.d(LOG_TAG, "Phone's user-agent is:  " + userAgent);
       }
     }
     return userAgent;
   }
 
-
-  public static String getSystemVersion(){
-    if( ( systemVersion == null ) || ( systemVersion.length() == 0 ) ){
+  public static String getSystemVersion() {
+    if ((systemVersion == null) || (systemVersion.length() == 0)) {
       final String version = Build.VERSION.RELEASE;
-      if ( version.length() > 0 ){
+      if (version.length() > 0) {
         systemVersion = version;
       } else {
         // default is "1.0"
@@ -946,12 +995,12 @@ class MdotMManager {
   }
 
   public static void setPublisherId(String publisherId) {
-    if( ( publisherId == null ) || ( publisherId.length() != 32 ) ){
-      if( MdotMManager.appKey == null ){
+    if ((publisherId == null) || (publisherId.length() != 32)) {
+      if (MdotMManager.appKey == null) {
 
         MdotMManager.appKey = "76af29cc28109e55d57bd707fbec72c4";
       }
-    }else {
+    } else {
       MdotMManager.appKey = publisherId;
     }
   }

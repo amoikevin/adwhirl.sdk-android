@@ -12,15 +12,9 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 
 package com.adwhirl.adapters;
-
-import java.util.Hashtable;
-
-import android.app.Activity;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.adwhirl.AdWhirlLayout;
 import com.adwhirl.AdWhirlTargeting;
@@ -32,98 +26,104 @@ import com.adwhirl.util.AdWhirlUtil;
 import com.millennialmedia.android.MMAdView;
 import com.millennialmedia.android.MMAdView.MMAdListener;
 
+import android.app.Activity;
+import android.text.TextUtils;
+import android.util.Log;
+
+import java.util.Hashtable;
+
 public class MillennialAdapter extends AdWhirlAdapter implements MMAdListener {
-	public MillennialAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
-		super(adWhirlLayout, ration);
-	}
+  public MillennialAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
+    super(adWhirlLayout, ration);
+  }
 
-	@Override
-	public void handle() {
-	 	 AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-	 	 if(adWhirlLayout == null) {
-	 		 return;
-	 	 }
-	 	 
-	      Hashtable<String, String> map = new Hashtable<String, String>();
+  @Override
+  public void handle() {
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
+    }
 
-	      final AdWhirlTargeting.Gender gender = AdWhirlTargeting.getGender();
-	      if (gender == Gender.MALE) {
-	    	  map.put("gender", "male");
-	      }
-	      else if (gender == Gender.FEMALE) {
-	    	  map.put("gender", "female");
-	      }
+    Hashtable<String, String> map = new Hashtable<String, String>();
 
-	      final int age = AdWhirlTargeting.getAge();
-	      if (age != -1) {
-	    	  map.put("age", String.valueOf(age));
-	      }
+    final AdWhirlTargeting.Gender gender = AdWhirlTargeting.getGender();
+    if (gender == Gender.MALE) {
+      map.put("gender", "male");
+    } else if (gender == Gender.FEMALE) {
+      map.put("gender", "female");
+    }
 
-	      final String postalCode = AdWhirlTargeting.getPostalCode();
-	      if (!TextUtils.isEmpty(postalCode)) {
-	    	  map.put("zip", postalCode);
-	      }
-        final String keywords = AdWhirlTargeting.getKeywordSet() != null ?
-            TextUtils.join(",", AdWhirlTargeting.getKeywordSet()) :
-            AdWhirlTargeting.getKeywords();
-        if (!TextUtils.isEmpty(keywords)) {
-	        map.put("keywords", keywords);
-	      }
-	      
-	      // MM requests this pair to be specified
-	      map.put("vendor", "adwhirl");
-	      
-	      final boolean testMode = AdWhirlTargeting.getTestMode();
-	      
-	      // Instantiate an ad view and add it to the view
-	      MMAdView adView = new MMAdView((Activity)adWhirlLayout.getContext(), ration.key, "MMBannerAdTop", -1, testMode, map);
-	      adView.setListener(this);
-	      adView.callForAd();
-	      
-	      Extra extra = adWhirlLayout.extra;
-	      if(extra.locationOn == 1 && adWhirlLayout.adWhirlManager.location != null) {
-	    	  adView.updateUserLocation(adWhirlLayout.adWhirlManager.location);
-	      }
-	      
-	      adView.setHorizontalScrollBarEnabled(false);
-	      adView.setVerticalScrollBarEnabled(false);
-	}
+    final int age = AdWhirlTargeting.getAge();
+    if (age != -1) {
+      map.put("age", String.valueOf(age));
+    }
 
-	public void MMAdReturned(MMAdView adView) {
- 		Log.d(AdWhirlUtil.ADWHIRL, "Millennial success");
- 		adView.setListener(null);
+    final String postalCode = AdWhirlTargeting.getPostalCode();
+    if (!TextUtils.isEmpty(postalCode)) {
+      map.put("zip", postalCode);
+    }
+    final String keywords = AdWhirlTargeting.getKeywordSet() != null ? TextUtils
+        .join(",", AdWhirlTargeting.getKeywordSet())
+        : AdWhirlTargeting.getKeywords();
+    if (!TextUtils.isEmpty(keywords)) {
+      map.put("keywords", keywords);
+    }
 
-	 	 AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-	 	 if(adWhirlLayout == null) {
-	 		 return;
-	 	 }
-	 	 
- 		adWhirlLayout.adWhirlManager.resetRollover();
- 		adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, adView));
-		adWhirlLayout.rotateThreadedDelayed();
-	}
-	
-	public void MMAdFailed(MMAdView adView) {
-		Log.d(AdWhirlUtil.ADWHIRL, "Millennial failure");
-		adView.setListener(null);
-		
-	 	 AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-	 	 if(adWhirlLayout == null) {
-	 		 return;
-	 	 }
-	 	 
-		adWhirlLayout.rollover();
-	}		
-	
-	public void MMAdClickedToNewBrowser(MMAdView adview) {
-		Log.d(AdWhirlUtil.ADWHIRL, "Millennial Ad clicked, new browser launched" );
-	}
-	
-	public void MMAdClickedToOverlay(MMAdView adview) {
-		Log.d(AdWhirlUtil.ADWHIRL, "Millennial Ad Clicked to overlay" );
-	}
-	
-	public void MMAdOverlayLaunched(MMAdView adview) {
-		Log.d(AdWhirlUtil.ADWHIRL, "Millennial Ad Overlay Launched" );
-	}	
+    // MM requests this pair to be specified
+    map.put("vendor", "adwhirl");
+
+    final boolean testMode = AdWhirlTargeting.getTestMode();
+
+    // Instantiate an ad view and add it to the view
+    MMAdView adView = new MMAdView((Activity) adWhirlLayout.getContext(),
+        ration.key, "MMBannerAdTop", -1, testMode, map);
+    adView.setListener(this);
+    adView.callForAd();
+
+    Extra extra = adWhirlLayout.extra;
+    if (extra.locationOn == 1 && adWhirlLayout.adWhirlManager.location != null) {
+      adView.updateUserLocation(adWhirlLayout.adWhirlManager.location);
+    }
+
+    adView.setHorizontalScrollBarEnabled(false);
+    adView.setVerticalScrollBarEnabled(false);
+  }
+
+  public void MMAdReturned(MMAdView adView) {
+    Log.d(AdWhirlUtil.ADWHIRL, "Millennial success");
+    adView.setListener(null);
+
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
+    }
+
+    adWhirlLayout.adWhirlManager.resetRollover();
+    adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, adView));
+    adWhirlLayout.rotateThreadedDelayed();
+  }
+
+  public void MMAdFailed(MMAdView adView) {
+    Log.d(AdWhirlUtil.ADWHIRL, "Millennial failure");
+    adView.setListener(null);
+
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
+    }
+
+    adWhirlLayout.rollover();
+  }
+
+  public void MMAdClickedToNewBrowser(MMAdView adview) {
+    Log.d(AdWhirlUtil.ADWHIRL, "Millennial Ad clicked, new browser launched");
+  }
+
+  public void MMAdClickedToOverlay(MMAdView adview) {
+    Log.d(AdWhirlUtil.ADWHIRL, "Millennial Ad Clicked to overlay");
+  }
+
+  public void MMAdOverlayLaunched(MMAdView adview) {
+    Log.d(AdWhirlUtil.ADWHIRL, "Millennial Ad Overlay Launched");
+  }
 }
