@@ -28,10 +28,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -46,6 +51,7 @@ import com.adwhirl.obj.Ration;
 import com.adwhirl.util.AdWhirlUtil;
 
 public class AdWhirlLayout extends RelativeLayout {
+    public static final String ADWHIRL_KEY = "ADWHIRL_KEY";
 	public WeakReference<Activity> activityReference;
 	
 	// Only the UI thread can update the UI, so we need this for UI callbacks
@@ -87,15 +93,43 @@ public class AdWhirlLayout extends RelativeLayout {
 	public AdWhirlLayout(Context context, AttributeSet attrs) {
 	    super(context, attrs);
 	    // Retrieves AdWhirl key.
-	    TypedArray array =
-	        getContext().obtainStyledAttributes(attrs, R.styleable.com_adwhirl_AdWhirlLayout);
-	    String key = null;
-	    if (array != null) {
-	        key = array.getString(R.styleable.com_adwhirl_AdWhirlLayout_keyAdWhirl);
-	    }
-	    
+	    String key = getAdWhirlKey(context);
 	    init((Activity) context, key);
 	}
+	
+	protected String getAdWhirlKey(Context context) {
+	    final String packageName = context.getPackageName();
+	    final String activityName = context.getClass().getName();
+	    final PackageManager pm = context.getPackageManager();
+	    Bundle bundle = null;
+	    // Attempts to retrieve Activity-specific AdWhirl key first.  If not
+	    // found, retrieve Application-wide AdWhirl key.
+	    try {
+            ActivityInfo activityInfo = pm.getActivityInfo(
+                new ComponentName(packageName, activityName),
+                PackageManager.GET_META_DATA);
+            bundle = activityInfo.metaData;
+            if (bundle != null) {
+                return bundle.getString(AdWhirlLayout.ADWHIRL_KEY);
+            }
+        } catch (NameNotFoundException exception) {
+            // Activity cannot be found.  Shouldn't be here.
+            return null;
+        }
+        
+        try {
+            ApplicationInfo appInfo =
+                pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            bundle = appInfo.metaData;
+            if (bundle != null) {
+                return bundle.getString(AdWhirlLayout.ADWHIRL_KEY);
+            }
+        } catch (NameNotFoundException exception) {
+            // Application cannot be found.  Shouldn't be here.
+            return null;
+        }
+        return null;
+    }
 	
 	protected void init(final Activity context, final String keyAdWhirl) {
         this.activityReference = new WeakReference<Activity>(context);

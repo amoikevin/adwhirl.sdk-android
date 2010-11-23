@@ -12,8 +12,7 @@
     <com.adwhirl.AdWhirlLayout
         android:id="@+id/adwhirl_layout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        app:keyAdWhirl="643eb700781e4f47b017ea27d1aba3be" />
+        android:layout_height="wrap_content" />
     <TextView 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
