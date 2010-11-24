@@ -14,11 +14,9 @@
  limitations under the License.
 */
 
+Please see http://www.adwhirl.com/doc/android/AdWhirlAndroidSDKSetup.html for setup instructions, Changelog.txt for changes in this version and http://code.google.com/p/adwhirl for the latest news, releases and issue reports.
 
-
-
-THIS IS A BETA RELEASE.
-We haven't fully tested this SDK yet - it is provided "AS IS". Use care if including this in a release.
+Quick Start:
 
 Add the following mandatory permissions to AndroidManifest.xml
 
