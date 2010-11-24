@@ -1,35 +1,34 @@
 AdWhirl Android SDK Changelog
 
-For a full detailed change log visit http://code.google.com/p/adwhirl/source/list?repo=sdk
+For a full detailed change log visit http://code.google.com/p/adwhirl/source/list?repo=sdk-android
 
+***************************
+Version 2.6.0 (Nov 24 2010)
+***************************
+- Added support to inflate from XML
+- House ads confined to 320x52
+- House ad icon properly scaled for density
 
 ***************************
 Version 2.5.3 (Aug 18 2010)
 ***************************
-
 - Added ZestADZ adapter
 - Added AFMA adapter
 - Vast refactoring to prevent memory leaks
 
-
 ***************************
 Version 2.5.2 (Jul 26 2010)
 ***************************
-
 - Don't pass a null location to Millennial adapter
-
 
 ***************************
 Version 2.5.1 (Jul 19 2010)
 ***************************
-
 - House ad adapter calls resetRollover() on success
-
 
 ***************************
 Version 2.5.0 (Jul 16 2010)
 ***************************
-
 - Added AdWhirlTargeting.
 - Adapters use rolloverThread()
 - Event adapter does not call rotate()/rollover()
