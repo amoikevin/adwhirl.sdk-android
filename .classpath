@@ -8,5 +8,8 @@
 	<classpathentry kind="lib" path="libs/MMAdView.jar"/>
 	<classpathentry kind="lib" path="libs/GoogleAdView.jar"/>
 	<classpathentry kind="lib" path="libs/zestadz_android_sdkv1.2.jar"/>
+	<classpathentry kind="lib" path="libs/mdotm-sdk-android.jar"/>
+	<classpathentry kind="lib" path="libs/InMobiAndroidSDK.jar"/>
+	<classpathentry kind="lib" path="libs/OneRiotLib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
