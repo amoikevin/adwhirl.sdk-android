@@ -2,9 +2,20 @@ AdWhirl Android SDK Changelog
 
 For a full detailed change log visit http://code.google.com/p/adwhirl/source/list?repo=sdk-android
 
-**************************
+***************************
+Version 2.6.3 (Feb 22 2011)
+***************************
+- Added support for OneRiot
+- Updated InMobi adapter
+
+***************************
+Version 2.6.2 (Jan 24 2011)
+***************************
+- Added support for InMobi
+
+***************************
 Version 2.6.1 (Jan 11 2011)
-**************************
+***************************
 - Added support for MdotM
 
 ***************************
