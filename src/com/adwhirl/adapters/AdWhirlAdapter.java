@@ -48,6 +48,14 @@ public abstract class AdWhirlAdapter {
             return unknownAdNetwork(adWhirlLayout, ration);
           }
 
+        case AdWhirlUtil.NETWORK_TYPE_INMOBI:
+          if (Class.forName("com.inmobi.androidsdk.impl.InMobiAdView") != null) {
+            return getNetworkAdapter("com.adwhirl.adapters.InMobiAdapter",
+                adWhirlLayout, ration);
+          } else {
+            return unknownAdNetwork(adWhirlLayout, ration);
+          }
+
         case AdWhirlUtil.NETWORK_TYPE_QUATTRO:
           if (Class.forName("com.qwapi.adclient.android.view.QWAdView") != null) {
             return getNetworkAdapter("com.adwhirl.adapters.QuattroAdapter",
@@ -63,6 +71,7 @@ public abstract class AdWhirlAdapter {
           } else {
             return unknownAdNetwork(adWhirlLayout, ration);
           }
+          
         case AdWhirlUtil.NETWORK_TYPE_ADSENSE:
           if (Class.forName("com.google.ads.GoogleAdView") != null) {
             return getNetworkAdapter("com.adwhirl.adapters.AdSenseAdapter",
@@ -70,6 +79,7 @@ public abstract class AdWhirlAdapter {
           } else {
             return unknownAdNetwork(adWhirlLayout, ration);
           }
+          
         case AdWhirlUtil.NETWORK_TYPE_ZESTADZ:
           if (Class.forName("com.zestadz.android.ZestADZAdView") != null) {
             return getNetworkAdapter("com.adwhirl.adapters.ZestAdzAdapter",
@@ -77,9 +87,15 @@ public abstract class AdWhirlAdapter {
           } else {
             return unknownAdNetwork(adWhirlLayout, ration);
           }
+          
         case AdWhirlUtil.NETWORK_TYPE_MDOTM:
           return getNetworkAdapter("com.adwhirl.adapters.MdotMAdapter",
               adWhirlLayout, ration);
+          
+        case AdWhirlUtil.NETWORK_TYPE_ONERIOT:
+            return getNetworkAdapter("com.adwhirl.adapters.OneRiotAdapter",
+                adWhirlLayout, ration);
+
         case AdWhirlUtil.NETWORK_TYPE_CUSTOM:
           return new CustomAdapter(adWhirlLayout, ration);
 
@@ -106,15 +122,15 @@ public abstract class AdWhirlAdapter {
 
     try {
       @SuppressWarnings("unchecked")
-      Class<? extends AdWhirlAdapter> adapterClass = (Class<? extends AdWhirlAdapter>) Class
-          .forName(networkAdapter);
+      Class<? extends AdWhirlAdapter> adapterClass = 
+          (Class<? extends AdWhirlAdapter>) Class.forName(networkAdapter);
 
       Class<?>[] parameterTypes = new Class[2];
       parameterTypes[0] = AdWhirlLayout.class;
       parameterTypes[1] = Ration.class;
 
-      Constructor<? extends AdWhirlAdapter> constructor = adapterClass
-          .getConstructor(parameterTypes);
+      Constructor<? extends AdWhirlAdapter> constructor = 
+          adapterClass.getConstructor(parameterTypes);
 
       Object[] args = new Object[2];
       args[0] = adWhirlLayout;
@@ -138,8 +154,7 @@ public abstract class AdWhirlAdapter {
     return null;
   }
 
-  public static void handle(AdWhirlLayout adWhirlLayout, Ration ration)
-      throws Throwable {
+  public static void handle(AdWhirlLayout adWhirlLayout, Ration ration) throws Throwable {
     AdWhirlAdapter adapter = AdWhirlAdapter.getAdapter(adWhirlLayout, ration);
     if (adapter != null) {
       Log.d(AdWhirlUtil.ADWHIRL, "Valid adapter, calling handle()");

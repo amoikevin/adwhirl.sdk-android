@@ -2,6 +2,11 @@ AdWhirl Android SDK Changelog
 
 For a full detailed change log visit http://code.google.com/p/adwhirl/source/list?repo=sdk-android
 
+**************************
+Version 2.6.1 (Jan 11 2011)
+**************************
+- Added support for MdotM
+
 ***************************
 Version 2.6.0 (Nov 24 2010)
 ***************************

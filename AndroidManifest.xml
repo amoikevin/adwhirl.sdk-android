@@ -16,11 +16,25 @@
             <!-- If Activity-specific key is omitted, the App-wide key will be used. -->     
             <!-- <meta-data android:value="46a9e26bb1f5499ab7b00c9807ae034b" android:name="ADWHIRL_KEY" /> -->
         </activity>
-
+        <!-- AdMob integration -->
         <activity android:name="com.admob.android.ads.AdMobActivity" 
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
                   android:configChanges="orientation|keyboard|keyboardHidden"
                   />
+        <!-- MdotM integration -->
+        <activity android:name="com.mdotm.android.ads.MdotmLandingPage"
+                  android:label="@string/app_name" >
+            <intent-filter>
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+              
+        <!-- Millennial integration -->
+        <activity android:name="com.millennialmedia.android.MMAdViewOverlayActivity" 
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                  android:configChanges="orientation|keyboard|keyboardHidden"
+                  />
+        
         <!-- Application-wide AdWhirl Key -->
         <!-- If both Activity-specific and App-wide AdWhirl Keys are specified, the
              Activity-specific key will override the App-wide key. -->

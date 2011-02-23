@@ -30,7 +30,7 @@ public class AdWhirlUtil {
   // Don't change anything below this line
   /***********************************************/
 
-  public static final int VERSION = 260;
+  public static final int VERSION = 262;
 
   public static final String ADWHIRL = "AdWhirl SDK";
 
@@ -52,7 +52,9 @@ public class AdWhirlUtil {
   public static final int NETWORK_TYPE_DOUBLECLICK = 15;
   public static final int NETWORK_TYPE_GENERIC = 16;
   public static final int NETWORK_TYPE_EVENT = 17;
+  public static final int NETWORK_TYPE_INMOBI = 18;
   public static final int NETWORK_TYPE_ZESTADZ = 20;
+  public static final int NETWORK_TYPE_ONERIOT = 23;
 
   public static final int CUSTOM_TYPE_BANNER = 1;
   public static final int CUSTOM_TYPE_ICON = 2;
