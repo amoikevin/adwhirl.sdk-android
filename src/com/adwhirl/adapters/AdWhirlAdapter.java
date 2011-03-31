@@ -41,15 +41,16 @@ public abstract class AdWhirlAdapter {
     try {
       switch (ration.type) {
         case AdWhirlUtil.NETWORK_TYPE_ADMOB:
-          if (Class.forName("com.admob.android.ads.AdView") != null) {
-            return getNetworkAdapter("com.adwhirl.adapters.AdMobAdapter",
-                adWhirlLayout, ration);
+          if (Class.forName("com.google.ads.AdView") != null) {
+            return getNetworkAdapter("com.adwhirl.adapters.GoogleAdMobAdsAdapter",
+                                     adWhirlLayout, ration);
           } else {
             return unknownAdNetwork(adWhirlLayout, ration);
           }
 
         case AdWhirlUtil.NETWORK_TYPE_INMOBI:
-          if (Class.forName("com.inmobi.androidsdk.impl.InMobiAdView") != null) {
+          if (Class.forName("com.inmobi.androidsdk.impl.InMobiAdView")
+              != null) {
             return getNetworkAdapter("com.adwhirl.adapters.InMobiAdapter",
                 adWhirlLayout, ration);
           } else {
@@ -57,7 +58,8 @@ public abstract class AdWhirlAdapter {
           }
 
         case AdWhirlUtil.NETWORK_TYPE_QUATTRO:
-          if (Class.forName("com.qwapi.adclient.android.view.QWAdView") != null) {
+          if (Class.forName("com.qwapi.adclient.android.view.QWAdView")
+              != null) {
             return getNetworkAdapter("com.adwhirl.adapters.QuattroAdapter",
                 adWhirlLayout, ration);
           } else {
@@ -154,7 +156,8 @@ public abstract class AdWhirlAdapter {
     return null;
   }
 
-  public static void handle(AdWhirlLayout adWhirlLayout, Ration ration) throws Throwable {
+  public static void handle(AdWhirlLayout adWhirlLayout, Ration ration) throws
+      Throwable {
     AdWhirlAdapter adapter = AdWhirlAdapter.getAdapter(adWhirlLayout, ration);
     if (adapter != null) {
       Log.d(AdWhirlUtil.ADWHIRL, "Valid adapter, calling handle()");

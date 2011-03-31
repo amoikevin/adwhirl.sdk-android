@@ -3,6 +3,13 @@ AdWhirl Android SDK Changelog
 For a full detailed change log visit http://code.google.com/p/adwhirl/source/list?repo=sdk-android
 
 ***************************
+Version 3.0.0 (Apr 1 2011)
+***************************
+- Added support for 480x75 house ads
+- Added support for the Google AdMob Ads SDK
+- Updated Millennial Media adapters to support v4.2 of their SDK
+
+***************************
 Version 2.6.3 (Feb 22 2011)
 ***************************
 - Added support for OneRiot

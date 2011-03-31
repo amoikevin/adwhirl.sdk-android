@@ -1,12 +1,12 @@
 /*
  Copyright 2009-2010 AdMob, Inc.
- 
+
     Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
   http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,9 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.Settings.Secure;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -325,11 +327,10 @@ public class AdWhirlManager {
       extra.fgBlue = textColor.getInt("blue");
       extra.fgAlpha = textColor.getInt("alpha") * 255;
     } catch (JSONException e) {
-      Log
-          .e(
-              AdWhirlUtil.ADWHIRL,
-              "Exception in parsing config.extra JSON. This may or may not be fatal.",
-              e);
+      Log.e(
+          AdWhirlUtil.ADWHIRL,
+          "Exception in parsing config.extra JSON. This may or may not be fatal.",
+          e);
     }
 
     this.extra = extra;
@@ -374,11 +375,10 @@ public class AdWhirlManager {
         rationsList.add(ration);
       }
     } catch (JSONException e) {
-      Log
-          .e(
-              AdWhirlUtil.ADWHIRL,
-              "JSONException in parsing config.rations JSON. This may or may not be fatal.",
-              e);
+      Log.e(
+          AdWhirlUtil.ADWHIRL,
+          "JSONException in parsing config.rations JSON. This may or may not be fatal.",
+          e);
     }
 
     Collections.sort(rationsList);
@@ -399,7 +399,27 @@ public class AdWhirlManager {
       custom.link = json.getString("redirect_url");
       custom.description = json.getString("ad_text");
 
-      custom.image = fetchImage(custom.imageLink);
+      // Populate high-res house ad info if available
+      // TODO(wesgoodman): remove try/catch block after upgrading server to
+      //  new protocol.
+      try {
+        custom.imageLink480x75 = json.getString("img_url_480x75");
+      } catch (JSONException e) {
+        custom.imageLink480x75 = null;
+      }
+
+      DisplayMetrics metrics = new DisplayMetrics();
+      ((WindowManager)contextReference.get()
+          .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay()
+              .getMetrics(metrics);
+      if(metrics.density == 1.5
+         && custom.type == AdWhirlUtil.CUSTOM_TYPE_BANNER
+         && custom.imageLink480x75 != null
+         && custom.imageLink480x75.length() != 0) {
+        custom.image = fetchImage(custom.imageLink480x75);
+      } else {
+        custom.image = fetchImage(custom.imageLink);
+      }
     } catch (JSONException e) {
       Log.e(AdWhirlUtil.ADWHIRL,
           "Caught JSONException in parseCustomJsonString()", e);
