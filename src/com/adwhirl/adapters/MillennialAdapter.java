@@ -25,6 +25,7 @@ import com.adwhirl.obj.Ration;
 import com.adwhirl.util.AdWhirlUtil;
 import com.millennialmedia.android.MMAdView;
 import com.millennialmedia.android.MMAdView.MMAdListener;
+import com.millennialmedia.android.MMAdViewSDK;
 
 import android.app.Activity;
 import android.text.TextUtils;
@@ -72,11 +73,10 @@ public class MillennialAdapter extends AdWhirlAdapter implements MMAdListener {
     // MM requests this pair to be specified
     map.put("vendor", "adwhirl");
 
-    final boolean testMode = AdWhirlTargeting.getTestMode();
-
     // Instantiate an ad view and add it to the view
     MMAdView adView = new MMAdView((Activity) adWhirlLayout.getContext(),
-        ration.key, "MMBannerAdTop", -1, testMode, map);
+        ration.key, "MMBannerAdTop", -1, map);
+    adView.setId(MMAdViewSDK.DEFAULT_VIEWID);
     adView.setListener(this);
     adView.callForAd();
 
@@ -125,5 +125,9 @@ public class MillennialAdapter extends AdWhirlAdapter implements MMAdListener {
 
   public void MMAdOverlayLaunched(MMAdView adview) {
     Log.d(AdWhirlUtil.ADWHIRL, "Millennial Ad Overlay Launched");
+  }
+
+  public void MMAdRequestIsCaching(MMAdView adView) {
+      //do nothing
   }
 }

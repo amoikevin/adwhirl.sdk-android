@@ -3,13 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="libs/admob-sdk-android.jar"/>
 	<classpathentry kind="lib" path="libs/qwandroidsdk.jar"/>
 	<classpathentry kind="lib" path="libs/MMAdView.jar"/>
-	<classpathentry kind="lib" path="libs/GoogleAdView.jar"/>
 	<classpathentry kind="lib" path="libs/zestadz_android_sdkv1.2.jar"/>
 	<classpathentry kind="lib" path="libs/mdotm-sdk-android.jar"/>
 	<classpathentry kind="lib" path="libs/InMobiAndroidSDK.jar"/>
 	<classpathentry kind="lib" path="libs/OneRiotLib.jar"/>
+	<classpathentry kind="lib" path="libs/GoogleAdView.jar"/>
+	<classpathentry kind="lib" path="libs/GoogleAdMobAdsSDK.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -17,8 +17,7 @@
             <!-- <meta-data android:value="46a9e26bb1f5499ab7b00c9807ae034b" android:name="ADWHIRL_KEY" /> -->
         </activity>
         <!-- AdMob integration -->
-        <activity android:name="com.admob.android.ads.AdMobActivity" 
-                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+        <activity android:name="com.google.ads.AdActivity" 
                   android:configChanges="orientation|keyboard|keyboardHidden"
                   />
         <!-- MdotM integration -->
@@ -34,6 +33,10 @@
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
                   android:configChanges="orientation|keyboard|keyboardHidden"
                   />
+        <activity android:name="com.millennialmedia.android.VideoPlayer"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                  android:configChanges="keyboardHidden|orientation|keyboard"
+                  />
         
         <!-- Application-wide AdWhirl Key -->
         <!-- If both Activity-specific and App-wide AdWhirl Keys are specified, the
@@ -48,5 +51,6 @@
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />  
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> 
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest> 
