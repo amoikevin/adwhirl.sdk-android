@@ -98,6 +98,10 @@ public abstract class AdWhirlAdapter {
             return getNetworkAdapter("com.adwhirl.adapters.OneRiotAdapter",
                 adWhirlLayout, ration);
 
+        case AdWhirlUtil.NETWORK_TYPE_NEXAGE:
+            return getNetworkAdapter("com.adwhirl.adapters.NexageAdapter",
+                adWhirlLayout, ration);
+
         case AdWhirlUtil.NETWORK_TYPE_CUSTOM:
           return new CustomAdapter(adWhirlLayout, ration);
 
