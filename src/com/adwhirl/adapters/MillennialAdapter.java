@@ -49,33 +49,33 @@ public class MillennialAdapter extends AdWhirlAdapter implements MMAdListener {
 
     final AdWhirlTargeting.Gender gender = AdWhirlTargeting.getGender();
     if (gender == Gender.MALE) {
-      map.put("gender", "male");
+      map.put(MMAdView.KEY_GENDER, "male");
     } else if (gender == Gender.FEMALE) {
-      map.put("gender", "female");
+      map.put(MMAdView.KEY_GENDER, "female");
     }
 
     final int age = AdWhirlTargeting.getAge();
     if (age != -1) {
-      map.put("age", String.valueOf(age));
+      map.put(MMAdView.KEY_AGE, String.valueOf(age));
     }
 
     final String postalCode = AdWhirlTargeting.getPostalCode();
     if (!TextUtils.isEmpty(postalCode)) {
-      map.put("zip", postalCode);
+      map.put(MMAdView.KEY_ZIP_CODE, postalCode);
     }
     final String keywords = AdWhirlTargeting.getKeywordSet() != null ? TextUtils
         .join(",", AdWhirlTargeting.getKeywordSet())
         : AdWhirlTargeting.getKeywords();
     if (!TextUtils.isEmpty(keywords)) {
-      map.put("keywords", keywords);
+      map.put(MMAdView.KEY_KEYWORDS, keywords);
     }
 
     // MM requests this pair to be specified
-    map.put("vendor", "adwhirl");
+    map.put(MMAdView.KEY_VENDOR, "adwhirl");
 
     // Instantiate an ad view and add it to the view
     MMAdView adView = new MMAdView((Activity) adWhirlLayout.getContext(),
-        ration.key, "MMBannerAdTop", -1, map);
+        ration.key, MMAdView.BANNER_AD_TOP, MMAdView.REFRESH_INTERVAL_OFF, map);
     adView.setId(MMAdViewSDK.DEFAULT_VIEWID);
     adView.setListener(this);
     adView.callForAd();
@@ -128,6 +128,10 @@ public class MillennialAdapter extends AdWhirlAdapter implements MMAdListener {
   }
 
   public void MMAdRequestIsCaching(MMAdView adView) {
-      //do nothing
+    //do nothing
+  }
+  
+  public void MMAdCachingCompleted(MMAdView adview, boolean success) {
+    // Do nothing. This callback is not used for banner ads.
   }
 }
