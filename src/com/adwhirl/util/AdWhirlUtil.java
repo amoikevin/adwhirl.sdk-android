@@ -17,7 +17,15 @@
 package com.adwhirl.util;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 public class AdWhirlUtil {
   public static final String urlConfig = "http://mob.adwhirl.com/getInfo.php?appid=%s&appver=%d&client=2";
@@ -124,5 +132,66 @@ public class AdWhirlUtil {
    */
   public static double convertToScreenPixels(double dipPixels, double density) {
     return (density > 0) ? (dipPixels * density) : dipPixels;
+  }
+  
+  /**
+   * Gets the md5 hashed and upper-cased device id.
+   *
+   * @param context
+   *          the application context.
+   *
+   * @return The encoded device id.
+   */
+  public static String getEncodedDeviceId(Context context) {
+    String androidId = Settings.Secure.getString(
+        context.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+    String hashedId;
+    if ((androidId == null) || isEmulator()) {
+      hashedId = md5("emulator");
+    } else {
+      hashedId = md5(androidId);
+    }
+
+    if (hashedId == null) {
+      return null;
+    }
+
+    return hashedId.toUpperCase(Locale.US);
+  }
+  
+  /**
+   * Method for returning an md5 hash of a string.
+   *
+   * @param val
+   *          the string to hash.
+   *
+   * @return A hex string representing the md5 hash of the input.
+   */
+  private static String md5(String val) {
+    String result = null;
+
+    if ((val != null) && (val.length() > 0)) {
+      try {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        md5.update(val.getBytes(), 0, val.length());
+        result = String.format("%032X", new BigInteger(1, md5.digest()));
+      } catch (NoSuchAlgorithmException nsae) {
+        result = val.substring(0, 32);
+      }
+    }
+
+    return result;
+  }
+  
+  /**
+   * Checks whether or not the running device is an emulator.
+   *
+   * @return Boolean indicating if the app is currently running in an emulator.
+   */
+  public static boolean isEmulator() {
+    return (Build.BOARD.equals("unknown")
+        && Build.DEVICE.equals("generic")
+        && Build.BRAND.equals("generic"));
   }
 }

@@ -160,7 +160,7 @@ public abstract class AdWhirlAdapter {
     return null;
   }
 
-  public static void handle(AdWhirlLayout adWhirlLayout, Ration ration) throws
+  public static AdWhirlAdapter handle(AdWhirlLayout adWhirlLayout, Ration ration) throws
       Throwable {
     AdWhirlAdapter adapter = AdWhirlAdapter.getAdapter(adWhirlLayout, ration);
     if (adapter != null) {
@@ -169,9 +169,15 @@ public abstract class AdWhirlAdapter {
     } else {
       throw new Exception("Invalid adapter");
     }
+    return adapter;
   }
 
   public abstract void handle();
+  
+  // Added to tell adapter that it's view will be destroyed.
+  public void willDestroy() {
+    Log.d(AdWhirlUtil.ADWHIRL, "Generic adapter will get destroyed");
+  }
 
   protected static String googleAdSenseCompanyName;
   protected static String googleAdSenseAppName;
