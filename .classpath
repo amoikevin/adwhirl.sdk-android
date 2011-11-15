@@ -9,7 +9,8 @@
 	<classpathentry kind="lib" path="libs/mdotm-sdk-android.jar"/>
 	<classpathentry kind="lib" path="libs/InMobiAndroidSDK.jar"/>
 	<classpathentry kind="lib" path="libs/OneRiotLib.jar"/>
+	<classpathentry kind="lib" path="libs/NexageLite1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/GoogleAdView.jar"/>
-	<classpathentry kind="lib" path="libs/GoogleAdMobAdsSDK.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="libs/GoogleAdMobAdsSdk-4.1.1.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
