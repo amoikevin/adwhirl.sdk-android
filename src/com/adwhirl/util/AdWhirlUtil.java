@@ -55,6 +55,7 @@ public class AdWhirlUtil {
   public static final int NETWORK_TYPE_INMOBI = 18;
   public static final int NETWORK_TYPE_ZESTADZ = 20;
   public static final int NETWORK_TYPE_ONERIOT = 23;
+  public static final int NETWORK_TYPE_NEXAGE = 24;
 
   public static final int CUSTOM_TYPE_BANNER = 1;
   public static final int CUSTOM_TYPE_ICON = 2;

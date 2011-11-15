@@ -365,6 +365,12 @@ public class AdWhirlManager {
             ration.key2 = keyObj.getString("publisherID");
             break;
 
+          case AdWhirlUtil.NETWORK_TYPE_NEXAGE:
+            keyObj = jsonRation.getJSONObject("key");
+            ration.key = keyObj.getString("dcn");
+            ration.key2 = keyObj.getString("position");
+            break;
+
           default:
             ration.key = jsonRation.getString("key");
             break;
