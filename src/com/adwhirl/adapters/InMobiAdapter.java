@@ -29,6 +29,10 @@ import java.util.Date;
 public final class InMobiAdapter extends AdWhirlAdapter implements InMobiAdDelegate {
   private Extra extra = null;
   public int adUnit = InMobiAdDelegate.INMOBI_AD_UNIT_320X48; //default size 9
+
+  // Some versions of InMobi SDK make multiple callbacks, so this only accepts the first.
+  private boolean notifyAdWhirlAdapter = true;
+
   public InMobiAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
     super(adWhirlLayout, ration);
     extra = adWhirlLayout.extra;
@@ -36,17 +40,16 @@ public final class InMobiAdapter extends AdWhirlAdapter implements InMobiAdDeleg
 
   @Override
   public void handle() {
-
     AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
     if (adWhirlLayout == null) {
       return;
     }
-    
+
     Activity activity = adWhirlLayout.activityReference.get();
     if (activity == null) {
       return;
     }
-    
+
     Context context = activity.getApplicationContext();
     InMobiAdView adView = InMobiAdView.requestAdUnitWithDelegate(context, this, activity, adUnit);
     adView.loadNewAd();
@@ -54,28 +57,36 @@ public final class InMobiAdapter extends AdWhirlAdapter implements InMobiAdDeleg
 
   @Override
   public void adRequestCompleted(InMobiAdView adView) {
-    Log.d(AdWhirlUtil.ADWHIRL, "InMobi success");
+    if (notifyAdWhirlAdapter) {
+      notifyAdWhirlAdapter = false;
 
-    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-    if (adWhirlLayout == null) {
-      return;
+      Log.d(AdWhirlUtil.ADWHIRL, "InMobi success");
+
+      AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+      if (adWhirlLayout == null) {
+        return;
+      }
+
+      adWhirlLayout.adWhirlManager.resetRollover();
+      adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, adView));
+      adWhirlLayout.rotateThreadedDelayed();
+      adView.stopReceivingNotifications();
     }
-
-    adWhirlLayout.adWhirlManager.resetRollover();
-    adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, adView));
-    adWhirlLayout.rotateThreadedDelayed();
-    adView.stopReceivingNotifications();
   }
 
   @Override
   public void adRequestFailed(InMobiAdView adView) {
-    Log.d(AdWhirlUtil.ADWHIRL, "InMobi failure");     
-    adView.stopReceivingNotifications();
-    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-    if (adWhirlLayout == null) {
-      return;
+    if (notifyAdWhirlAdapter) {
+      notifyAdWhirlAdapter = false;
+
+      Log.d(AdWhirlUtil.ADWHIRL, "InMobi failure");     
+      adView.stopReceivingNotifications();
+      AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+      if (adWhirlLayout == null) {
+        return;
+      }
+      adWhirlLayout.rollover();
     }
-    adWhirlLayout.rollover();
   }
 
   @Override
