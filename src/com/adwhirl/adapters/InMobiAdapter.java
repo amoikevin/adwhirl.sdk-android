@@ -7,18 +7,17 @@ import com.adwhirl.AdWhirlTargeting.Gender;
 import com.adwhirl.obj.Extra;
 import com.adwhirl.obj.Ration;
 import com.adwhirl.util.AdWhirlUtil;
-import com.inmobi.androidsdk.EducationType;
-import com.inmobi.androidsdk.EthnicityType;
-import com.inmobi.androidsdk.GenderType;
-import com.inmobi.androidsdk.InMobiAdDelegate;
-import com.inmobi.androidsdk.impl.InMobiAdView;
+import com.inmobi.androidsdk.IMAdListener;
+import com.inmobi.androidsdk.IMAdRequest;
+import com.inmobi.androidsdk.IMAdRequest.ErrorCode;
+import com.inmobi.androidsdk.IMAdRequest.GenderType;
+import com.inmobi.androidsdk.IMAdView;
 
 import android.app.Activity;
-import android.content.Context;
-import android.location.Location;
 import android.util.Log;
 
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An adapter for the InMobi Android SDK.
@@ -26,12 +25,9 @@ import java.util.Date;
  * Note: The InMobi site Id is looked up using ration.key
  */
 
-public final class InMobiAdapter extends AdWhirlAdapter implements InMobiAdDelegate {
+public final class InMobiAdapter extends AdWhirlAdapter implements IMAdListener {
   private Extra extra = null;
-  public int adUnit = InMobiAdDelegate.INMOBI_AD_UNIT_320X48; //default size 9
-
-  // Some versions of InMobi SDK make multiple callbacks, so this only accepts the first.
-  private boolean notifyAdWhirlAdapter = true;
+  public int adUnit = IMAdView.INMOBI_AD_UNIT_320X50; //default size 15
 
   public InMobiAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
     super(adWhirlLayout, ration);
@@ -50,133 +46,74 @@ public final class InMobiAdapter extends AdWhirlAdapter implements InMobiAdDeleg
       return;
     }
 
-    Context context = activity.getApplicationContext();
-    InMobiAdView adView = InMobiAdView.requestAdUnitWithDelegate(context, this, activity, adUnit);
-    adView.loadNewAd();
+    IMAdView adView = new IMAdView(activity, adUnit, ration.key);
+    adView.setIMAdListener(this);
+    IMAdRequest imAdRequest = new IMAdRequest();
+    imAdRequest.setAge(AdWhirlTargeting.getAge());
+    imAdRequest.setGender(this.getGender());
+    imAdRequest.setLocationInquiryAllowed(this.isLocationInquiryAllowed());
+    imAdRequest.setTestMode(AdWhirlTargeting.getTestMode());
+    imAdRequest.setKeywords(AdWhirlTargeting.getKeywords());
+    imAdRequest.setPostalCode(AdWhirlTargeting.getPostalCode());
+    
+    // Setting tp key based on InMobi's implementation of this adapter.
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("tp", "c_adwhirl");
+    imAdRequest.setRequestParams(map);
+
+    // Set the auto refresh off.
+    adView.setRefreshInterval(IMAdView.REFRESH_INTERVAL_OFF);
+    adView.loadNewAd(imAdRequest);
   }
 
   @Override
-  public void adRequestCompleted(InMobiAdView adView) {
-    if (notifyAdWhirlAdapter) {
-      notifyAdWhirlAdapter = false;
+  public void onAdRequestCompleted(IMAdView adView) {
+    Log.d(AdWhirlUtil.ADWHIRL, "InMobi success");
 
-      Log.d(AdWhirlUtil.ADWHIRL, "InMobi success");
-
-      AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-      if (adWhirlLayout == null) {
-        return;
-      }
-
-      adWhirlLayout.adWhirlManager.resetRollover();
-      adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, adView));
-      adWhirlLayout.rotateThreadedDelayed();
-      adView.stopReceivingNotifications();
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
     }
+
+    adWhirlLayout.adWhirlManager.resetRollover();
+    adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, adView));
+    adWhirlLayout.rotateThreadedDelayed();
   }
 
   @Override
-  public void adRequestFailed(InMobiAdView adView) {
-    if (notifyAdWhirlAdapter) {
-      notifyAdWhirlAdapter = false;
-
-      Log.d(AdWhirlUtil.ADWHIRL, "InMobi failure");     
-      adView.stopReceivingNotifications();
-      AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
-      if (adWhirlLayout == null) {
-        return;
-      }
-      adWhirlLayout.rollover();
+  public void onAdRequestFailed(IMAdView adView, ErrorCode errorCode) {
+    Log.d(AdWhirlUtil.ADWHIRL, "InMobi failure (" + errorCode + ")");
+    AdWhirlLayout adWhirlLayout = adWhirlLayoutReference.get();
+    if (adWhirlLayout == null) {
+      return;
     }
+    adWhirlLayout.rollover();
+  }
+  
+  @Override
+  public void onShowAdScreen(IMAdView adView) {
   }
 
   @Override
-  public int age() {
-    return AdWhirlTargeting.getAge();
+  public void onDismissAdScreen(IMAdView adView) {
   }
 
-  @Override
-  public String areaCode() {
-    return null;
-  }
-
-  @Override
-  public Location currentLocation() {
-    return null;
-  }
-
-  @Override
-  public Date dateOfBirth() {
-    return null;
-  }
-
-  @Override
-  public EducationType education() {
-    return null;
-  }
-
-  @Override
-  public EthnicityType ethnicity() {
-    return null;
-  }
-
-  @Override
-  public GenderType gender() {
+  public GenderType getGender() {
     Gender gender = AdWhirlTargeting.getGender();
     if (Gender.MALE == gender) {
-      return GenderType.G_M;
+      return GenderType.MALE;
     }
     if (Gender.FEMALE == gender) {
-      return GenderType.G_F;
+      return GenderType.FEMALE;
     }
-    return GenderType.G_None;
+    return GenderType.NONE;
   }
 
-  @Override
-  public int income() {
-    return 0;
-  }
-
-  @Override
-  public String interests() {
-    return null;
-  }
-
-  @Override
   public boolean isLocationInquiryAllowed() {
     if (extra.locationOn == 1) {
       return true;
     } else {
       return false;
     }
-  }
-
-  @Override
-  public boolean isPublisherProvidingLocation() {
-    return false;
-  }
-
-  @Override
-  public String keywords() {
-    return AdWhirlTargeting.getKeywords();
-  }
-
-  @Override
-  public String postalCode() {
-    return AdWhirlTargeting.getPostalCode();
-  }
-
-  @Override
-  public String searchString() {
-    return null;
-  }
-
-  @Override
-  public String siteId() {
-    return ration.key;
-  }
-
-  @Override
-  public boolean testMode() {
-    return AdWhirlTargeting.getTestMode();
   }
 }
