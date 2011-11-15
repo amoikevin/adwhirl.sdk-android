@@ -17,6 +17,7 @@
 package com.adwhirl.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import com.adwhirl.*;
 import com.adwhirl.AdWhirlLayout.ViewAdRunnable;
@@ -27,6 +28,8 @@ import com.google.ads.AdRequest.ErrorCode;
 import java.text.SimpleDateFormat;
 
 public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener {
+  private AdView adView;
+  
   public GoogleAdMobAdsAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
     super(adWhirlLayout, ration);
   }
@@ -58,10 +61,18 @@ public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener 
       return;
     }
 
-    AdView adView = new AdView(activity, AdSize.BANNER, ration.key);
+    adView = new AdView(activity, AdSize.BANNER, ration.key);
 
     adView.setAdListener(this);
     adView.loadAd(requestForAdWhirlLayout(adWhirlLayout));
+  }
+  
+  @Override
+  public void willDestroy() {
+    log("AdView will get destroyed");
+    if (adView != null) {
+      adView.destroy();
+    }
   }
   
   protected void log(String message) {
@@ -71,7 +82,14 @@ public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener 
   protected AdRequest requestForAdWhirlLayout(AdWhirlLayout layout) {
     AdRequest result = new AdRequest();
 
-    result.setTesting(AdWhirlTargeting.getTestMode());
+    if (AdWhirlTargeting.getTestMode()) {
+      Activity activity = layout.activityReference.get();
+      if (activity != null) {
+        Context context = activity.getApplicationContext();
+        String deviceId = AdWhirlUtil.getEncodedDeviceId(context);
+        result.addTestDevice(deviceId);
+      }
+    }
     result.setGender(genderForAdWhirlTargeting());
     result.setBirthday(birthdayForAdWhirlTargeting());
 

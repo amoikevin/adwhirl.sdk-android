@@ -69,6 +69,10 @@ public class AdWhirlLayout extends RelativeLayout {
 
   // This is just so our threads can reference us explicitly
   public WeakReference<RelativeLayout> superViewReference;
+  
+  // Added so we can tell the previous adapter that it is being destroyed.
+  private AdWhirlAdapter previousAdapter;
+  private AdWhirlAdapter currentAdapter;
 
   public Ration activeRation;
   public Ration nextRation;
@@ -219,7 +223,8 @@ public class AdWhirlLayout extends RelativeLayout {
     Log.d(AdWhirlUtil.ADWHIRL, rationInfo);
 
     try {
-      AdWhirlAdapter.handle(this, nextRation);
+      this.previousAdapter = this.currentAdapter;
+      this.currentAdapter = AdWhirlAdapter.handle(this, nextRation);
     } catch (Throwable t) {
       Log.w(AdWhirlUtil.ADWHIRL, "Caught an exception in adapter:", t);
       rollover();
@@ -245,6 +250,11 @@ public class AdWhirlLayout extends RelativeLayout {
     RelativeLayout superView = superViewReference.get();
     if (superView == null) {
       return;
+    }
+    // Tell the previous adapter that it's view will be destroyed.
+    if (this.previousAdapter != null) {
+      this.previousAdapter.willDestroy();
+      this.previousAdapter = null;
     }
     superView.removeAllViews();
 
