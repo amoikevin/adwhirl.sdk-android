@@ -49,7 +49,7 @@ public abstract class AdWhirlAdapter {
           }
 
         case AdWhirlUtil.NETWORK_TYPE_INMOBI:
-          if (Class.forName("com.inmobi.androidsdk.impl.InMobiAdView")
+          if (Class.forName("com.inmobi.androidsdk.IMAdView")
               != null) {
             return getNetworkAdapter("com.adwhirl.adapters.InMobiAdapter",
                 adWhirlLayout, ration);
