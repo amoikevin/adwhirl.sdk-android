@@ -1,12 +1,12 @@
 /*
  Copyright 2009-2010 AdMob, Inc.
- 
-    Licensed under the Apache License, Version 2.0 (the "License");
+
+ Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
   http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -69,7 +69,7 @@ public class AdWhirlLayout extends RelativeLayout {
 
   // This is just so our threads can reference us explicitly
   public WeakReference<RelativeLayout> superViewReference;
-  
+
   // Added so we can tell the previous adapter that it is being destroyed.
   private AdWhirlAdapter previousAdapter;
   private AdWhirlAdapter currentAdapter;
@@ -223,6 +223,10 @@ public class AdWhirlLayout extends RelativeLayout {
     Log.d(AdWhirlUtil.ADWHIRL, rationInfo);
 
     try {
+      // Tell the previous adapter that its view will be destroyed.
+      if (this.previousAdapter != null) {
+        this.previousAdapter.willDestroy();
+      }
       this.previousAdapter = this.currentAdapter;
       this.currentAdapter = AdWhirlAdapter.handle(this, nextRation);
     } catch (Throwable t) {
@@ -250,11 +254,6 @@ public class AdWhirlLayout extends RelativeLayout {
     RelativeLayout superView = superViewReference.get();
     if (superView == null) {
       return;
-    }
-    // Tell the previous adapter that it's view will be destroyed.
-    if (this.previousAdapter != null) {
-      this.previousAdapter.willDestroy();
-      this.previousAdapter = null;
     }
     superView.removeAllViews();
 
