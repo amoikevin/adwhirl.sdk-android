@@ -100,7 +100,7 @@
       for usage in an Android application.">
       <jar destfile="${jar.file}" filesonly="true">
           <fileset dir="${bin.dir}/classes" includes="**/*.class"
-              excludes="**/Invoker.class **/R*.class" />
+              excludes="**/Invoker.class **/R.class **/R$*.class" />
           <fileset dir="${src.dir}" includes="${assets.dir}/*" />
       </jar>
   </target>
