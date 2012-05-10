@@ -21,13 +21,12 @@ import java.util.Map;
 
 /**
  * An adapter for the InMobi Android SDK.
- * 
+ *
  * Note: The InMobi site Id is looked up using ration.key
  */
 
 public final class InMobiAdapter extends AdWhirlAdapter implements IMAdListener {
   private Extra extra = null;
-  public int adUnit = IMAdView.INMOBI_AD_UNIT_320X50; //default size 15
 
   public InMobiAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
     super(adWhirlLayout, ration);
@@ -46,7 +45,7 @@ public final class InMobiAdapter extends AdWhirlAdapter implements IMAdListener 
       return;
     }
 
-    IMAdView adView = new IMAdView(activity, adUnit, ration.key);
+    IMAdView adView = new IMAdView(activity, IMAdView.INMOBI_AD_UNIT_320X50, ration.key);
     adView.setIMAdListener(this);
     IMAdRequest imAdRequest = new IMAdRequest();
     imAdRequest.setAge(AdWhirlTargeting.getAge());
@@ -55,7 +54,7 @@ public final class InMobiAdapter extends AdWhirlAdapter implements IMAdListener 
     imAdRequest.setTestMode(AdWhirlTargeting.getTestMode());
     imAdRequest.setKeywords(AdWhirlTargeting.getKeywords());
     imAdRequest.setPostalCode(AdWhirlTargeting.getPostalCode());
-    
+
     // Setting tp key based on InMobi's implementation of this adapter.
     Map<String, String> map = new HashMap<String, String>();
     map.put("tp", "c_adwhirl");
@@ -89,7 +88,7 @@ public final class InMobiAdapter extends AdWhirlAdapter implements IMAdListener 
     }
     adWhirlLayout.rollover();
   }
-  
+
   @Override
   public void onShowAdScreen(IMAdView adView) {
   }
@@ -115,5 +114,9 @@ public final class InMobiAdapter extends AdWhirlAdapter implements IMAdListener 
     } else {
       return false;
     }
+  }
+
+  @Override
+  public void onLeaveApplication(IMAdView adView) {
   }
 }
