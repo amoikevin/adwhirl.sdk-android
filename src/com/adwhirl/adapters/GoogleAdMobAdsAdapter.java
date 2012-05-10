@@ -25,19 +25,12 @@ import com.adwhirl.obj.Ration;
 import com.adwhirl.util.AdWhirlUtil;
 import com.google.ads.*;
 import com.google.ads.AdRequest.ErrorCode;
-import java.text.SimpleDateFormat;
 
 public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener {
   private AdView adView;
-  
+
   public GoogleAdMobAdsAdapter(AdWhirlLayout adWhirlLayout, Ration ration) {
     super(adWhirlLayout, ration);
-  }
-
-  protected String birthdayForAdWhirlTargeting() {
-    return (AdWhirlTargeting.getBirthDate() != null) ?
-      new SimpleDateFormat("yyyyMMdd").
-          format(AdWhirlTargeting.getBirthDate().getTime()) : null;
   }
 
   protected AdRequest.Gender genderForAdWhirlTargeting() {
@@ -55,7 +48,7 @@ public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener 
     if (adWhirlLayout == null) {
       return;
     }
-    
+
     Activity activity = adWhirlLayout.activityReference.get();
     if (activity == null) {
       return;
@@ -66,7 +59,7 @@ public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener 
     adView.setAdListener(this);
     adView.loadAd(requestForAdWhirlLayout(adWhirlLayout));
   }
-  
+
   @Override
   public void willDestroy() {
     log("AdView will get destroyed");
@@ -74,11 +67,11 @@ public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener 
       adView.destroy();
     }
   }
-  
+
   protected void log(String message) {
     Log.d(AdWhirlUtil.ADWHIRL, "GoogleAdapter " + message);
   }
-  
+
   protected AdRequest requestForAdWhirlLayout(AdWhirlLayout layout) {
     AdRequest result = new AdRequest();
 
@@ -91,17 +84,16 @@ public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener 
       }
     }
     result.setGender(genderForAdWhirlTargeting());
-    result.setBirthday(birthdayForAdWhirlTargeting());
+    result.setBirthday(AdWhirlTargeting.getBirthDate());
 
     if (layout.extra.locationOn == 1) {
       result.setLocation(layout.adWhirlManager.location);
     }
 
     result.setKeywords(AdWhirlTargeting.getKeywordSet());
-    
     return result;
   }
-  
+
   @Override
   public void onDismissScreen(Ad arg0) {
   }
@@ -138,16 +130,15 @@ public class GoogleAdMobAdsAdapter extends AdWhirlAdapter implements AdListener 
     if (adWhirlLayout == null) {
       return;
     }
-    
     if (!(arg0 instanceof AdView)) {
       log("invalid AdView");
       return;
     }
 
     AdView adView = (AdView)arg0;
-    
+
     adWhirlLayout.adWhirlManager.resetRollover();
     adWhirlLayout.handler.post(new ViewAdRunnable(adWhirlLayout, adView));
     adWhirlLayout.rotateThreadedDelayed();
-  } 
+  }
 }
