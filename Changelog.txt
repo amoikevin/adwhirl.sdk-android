@@ -3,16 +3,21 @@ AdWhirl Android SDK Changelog
 For a full detailed change log visit http://code.google.com/p/adwhirl/source/list?repo=sdk-android
 
 ***************************
+Version 3.2.0 (May 10 2012)
+***************************
+- Added support for AdMob v6.0.1
+- Added support for InMobi v350
+- Official support version for Millennial Media v4.5.1
+
+***************************
 Version 3.1.1 (Nov 16 2011)
 ***************************
-
 - Updated GoogleAdMob adapter to be compliant with v4.3.1
 - Completed GoogleAdMob adapter support for Android 1.5/1.6 devices (Issue #221)
 
 ***************************
 Version 3.1.0 (Nov 15 2011)
 ***************************
-
 - Added support for Nexage network
 - Added better GoogleAdMob adapter support for Android 1.5/1.6 devices
   (Issue #221)
