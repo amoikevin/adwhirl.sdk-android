@@ -33,6 +33,9 @@
         <activity android:name="com.millennialmedia.android.VideoPlayer"
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
                   android:configChanges="keyboardHidden|orientation|keyboard" />
+        <!-- InMobi integration -->
+        <activity android:name="com.inmobi.androidsdk.IMBrowserActivity"
+                  android:configChanges="keyboardHidden|orientation|keyboard" />
         <!-- Application-wide AdWhirl Key -->
         <!-- If both Activity-specific and App-wide AdWhirl Keys are specified, the
              Activity-specific key will override the App-wide key. -->
